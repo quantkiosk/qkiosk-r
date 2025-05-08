@@ -1,0 +1,150 @@
+import(curl,jsonlite,xts)
+
+importFrom("stats", "setNames", "na.omit")
+importFrom("utils", "str", "read.csv", "head", "tail", "unzip", "browseURL", "download.file","menu")
+importFrom("xts","as.xts")
+importFrom("stringdist","stringdist")
+
+export(
+
+  qk_audit,
+
+  qk_select,
+  to_df,
+  to_ts,
+
+  full,
+  highlight,
+
+  # fundamentals
+  qkiditems,
+  qk_fn,
+
+  pitAsFiled,
+  pitAsOf,
+
+  # account
+  qk_account,
+  qk_set_apikey,
+  qk_get_apikey,
+
+  # ownership
+  qk_fund,
+  qk_insider,
+  qk_activist,
+  qk_beneficial,
+  qk_institutional,
+  qk_holders,
+
+  # bulk data
+  qk_complete,
+
+  # universe
+  qk_univ,
+
+  # qkid
+  .qkidVersion,
+
+  qk_search_mgr,
+  qk_search_co,
+  qkid,
+  to_qkid,
+  is_qkid,
+  as.qkid,
+  is.qkid,
+
+  detail,
+  classname,
+
+  entity,
+  cls,
+  instrument,
+
+  qk_ticker, to_ticker,
+  qk_cik, to_cik,
+  qk_permid, to_permid,
+  qk_figi, to_figi,
+  qk_name, to_name,
+  qk_lei, to_lei,
+  qk_isin, to_isin,
+  qk_cusip, to_cusip,
+  #qk_sector, to_sector,
+  #qk_sic, to_sic,
+
+  # utilities
+  qk_sort,
+  qk_filter,
+  qk_summary,
+
+  today,
+  yyyymmdd,
+  is.yyyymmdd,
+  as.yyyymmdd,
+  seq.yyyymmdd,
+  qtrs,
+  days
+
+  #to_yyyy,
+  #to_qq,
+  #to_yyyyqq
+)
+  
+S3method(detail,qkid)
+
+S3method(qk_audit, default)
+
+S3method(qk_select, qk_fn)
+S3method(print, qk_fn)
+S3method(to_df, qk_fn)
+S3method(to_df, data.frame)
+S3method(to_ts, qk_fn)
+S3method(`[`, qk_fn)
+S3method(subset, qk_fn)
+S3method(full, qk_fn)
+S3method(as.data.frame, qk_fn)
+
+S3method(highlight, data.frame)
+S3method(print, qk_df)
+S3method(head, qk_df)
+S3method(tail, qk_df)
+S3method(full, qk_df)
+S3method(`[`, qk_df)
+S3method(to_ts, qk_df)
+S3method(to_df, qk_df)
+S3method(subset, qk_fn)
+
+S3method(print, qk_ts)
+S3method(as.xts, qk_ts)
+
+S3method(print, qkid_item)
+S3method(str, qkid_item)
+
+S3method(`[`, qkid)
+S3method(length, qkid)
+S3method(c, qkid)
+S3method(as.character, qkid)
+S3method(print, qkid)
+S3method(print, qkid_detail)
+
+S3method(print, qkaccount)
+
+S3method(qk_sort, qk_df_institutional)
+S3method(qk_filter, qk_df_institutional)
+S3method(qk_summary, qk_df_institutional)
+S3method(print, qk_df_institutional)
+S3method(print, qk_df_holders)
+S3method(print, qk_df_insider)
+S3method(print, qk_df_beneficial)
+
+S3method(as.yyyymmdd, numeric)
+S3method(as.yyyymmdd, Date)
+S3method(as.Date, yyyymmdd)
+S3method(as.POSIXct, yyyymmdd)
+S3method(as.POSIXlt, yyyymmdd)
+S3method(Ops, yyyymmdd)
+S3method(print, yyyymmdd)
+S3method(seq, yyyymmdd)
+S3method(diff, yyyymmdd)
+#S3method(to_qq, yyyymmdd)
+#S3method(to_yyyy, yyyymmdd)
+#S3method(to_yyyyqq, yyyymmdd)
