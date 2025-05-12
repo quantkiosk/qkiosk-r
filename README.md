@@ -4,6 +4,8 @@
 
 Official interface to [QUANTkiosk](https://quantkiosk.com) data api.
 
+<img width="753" alt="image" src="https://github.com/user-attachments/assets/5d328e70-cb5a-4a8e-b0f2-2bf4d6de8d72" />
+
 ### Features
 * A true extension of `R` - use the tools you are productive with.
 * Integrated symbology to easily map entities and instruments.
