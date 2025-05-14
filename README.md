@@ -40,3 +40,18 @@ export QK_API_KEY=<YOUR_API_KEY>
 require(qkiosk)
 qk_set_apikey("<YOUR_API_KEY")
 ```
+
+>[!TIP]
+>You don't actually need a key to get started with the package. We've included datasets that represent what each of the endpoints
+>return to help get a feel for the breadth and depth of what QK does.
+>```
+>data(package="qkiosk")
+>Data sets in package ‘qkiosk’:
+>
+>crox        Crocs Institutional Holders Details By Issuer
+>deshaw      D.E. Shaw Institutional Ownership Details (Including Submanagers)
+>nke         Nike (NKE) Insider Ownership Data
+>pershing    Pershing Square Beneficial and Activist Details
+>pfe         Pfizer (PFE) Revenue Data
+>sgcap       SG Capital Institutional Ownership Details (Aggregated)
+>
