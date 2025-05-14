@@ -24,12 +24,12 @@ install_github("https://github.com/quantkiosk/qkiosk-r")
 
 ### Set up your API key
 All access to live and historical data requires a valid `QK_API_KEY` to be set. To get your
-key go to the [account page](https://www.quantkiosk.com/account). If you have not signed up for an account, you can
+**FREE** key go to the [account page](https://www.quantkiosk.com/account). If you have not signed up for an account, you can
 enter your email and your account key will be good for 250 credits a day. More than enough to explore and
 make use of the API. If you need more data, just select an appropriate plan.
 
 ```r
-## Set you key in the R session after you load the freshly installed package
+## Set your API key in the R session after you've load the freshly installed package
 
 require(qkiosk)
 qk_set_apikey("<YOUR_API_KEY>")
@@ -59,20 +59,34 @@ qk_set_apikey("<YOUR_API_KEY>")
 
 ## Get Started
 
-### Symbology drives everything
+### Symbology drives everything.
 
-The most important part of any institutional data is often its weakest link. The best hedge funds know that understanding what you are
-looking at - be it an entity or instrument - is so critical it is just taken for granted amongst professionals. It is also
-an incredible pain point that firms spend millions a year to manage.
+The most important part of any institutional data is getting the mappings correct. The best hedge funds take having a security master for granted. It is also
+an incredible pain point that firms spend millions a year to manage, or tens of thousands (or more!) to buy.
 
-Once you have access to one, you never want to go without.
+Once you have access to a proper symbology - you won't understand how you ever lived without it.
 
-QUANTkiosk is looking to solve this once and for all by creating an open *entity and security* master to help
-leverage our data with as little effort as possible.  You can read more about our efforts on the site, but in short, everything
-within the API is referenced by a **QKID**. To make that _easy_ we have some helper functions. Both search and conversions come out of the box
+**QUANTkiosk** is solving this once and for all by creating an open *entity and security* master to help
+leverage our data with as little effort as possible.  You can read more about our project on the site, but in short, everything
+within the API is referenced by a **QKID**. To make that _easy_ we have some helper functions. Both search and conversion
+is part of the batteries included mindset of QK.
+
+Obviously you likely have _some_ identifier to begin with. Most often this is a ticker, like **AAPL** or **MRK**. You can use this
+to map to a **QKID**, but you can even search right from your `R` session. This is especially useful for things that
+don't have ticker - e.g. a hedge fund you want to track.
 
 ```
-# search for a company like Alibaba
+# You know the ticker or cik? Just use direct conversion:
+> qk_ticker("AAPL")
+                     AAPL 
+0000320193.0000.001S5N8V8
+
+> to_name(qk_cik(78003))
+[1] "PFIZER INC"
+> to_permid(qk_cik(78003))
+[1] "4295904722"
+
+# use fuzzy search for a company like Alibaba
 > BABA <- qk_search_co("alibaba")
 
  1: ALIBABA GROUP HOLDING-SP ADR
@@ -87,6 +101,7 @@ Selection: 1
 ALIBABA GROUP HOLDING-SP ADR 
    0001577552.0400.006G2JWB1
 ```
+
 You can also search for fund managers in a similar way
 ```
 > janest <- qk_search_mgr("jane street")
