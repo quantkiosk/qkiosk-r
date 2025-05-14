@@ -28,18 +28,20 @@ key go to the [account page](https://www.quantkiosk.com/account). If you have no
 enter your email and your account key will be good for 250 credits a day. More than enough to explore and
 make use of the API. If you need more data, just select an appropriate plan.
 
-```bash
-## bash shell
-
-export QK_API_KEY=<YOUR_API_KEY>
-```
-
 ```r
-## R session
+## Set you key in the R session after you load the freshly installed package
 
 require(qkiosk)
 qk_set_apikey("<YOUR_API_KEY>")
 ```
+
+>[!TIP]
+>```bash
+>## you can also set up your key in your shell to avoid having to set it in R
+>## this is more permanent and definitely how you would do it in production>
+>
+>export QK_API_KEY=<YOUR_API_KEY>
+>```
 
 >[!TIP]
 >You don't actually need a key to get started with the package. We've included datasets that represent what each of the endpoints
