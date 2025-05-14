@@ -38,7 +38,7 @@ export QK_API_KEY=<YOUR_API_KEY>
 ## R session
 
 require(qkiosk)
-qk_set_apikey("<YOUR_API_KEY")
+qk_set_apikey("<YOUR_API_KEY>")
 ```
 
 >[!TIP]
