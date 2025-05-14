@@ -17,8 +17,8 @@ Institutional Ownership API example of small manager filing.
     \item{\code{submissionType}}{filing type: 13F-HR or 13F-HR/A (amended)}
     \item{\code{reportPeriod}}{period of report}
     \item{\code{filedDate}}{when the data was filed}
-    \item{\code{normalizedIssuer}}{official 13f list name of instrument}
-    \item{\code{normalizedTitleOfClass}}{official 13f list title or class name of instrument}
+    \item{\code{issuer}}{name of instrument}
+    \item{\code{titleOfClass}}{title or class name of instrument}
     \item{\code{issuerSIC}}{official standardized industrial code}
     \item{\code{issuerSector}}{two-character sector code from QUANTkiosk™}
     \item{\code{issuerTicker}}{common exchange ticker}
@@ -92,8 +92,9 @@ str(sgcap)
 \dontrun{
 
 # code that generates SG Capital Ownership data. 
-sgcap.cik <- 0001009207
-qk_institutional(sgcap.cik, yyyy=2024, qq=1, aggType="aggregated")
+qk_search_mgr("sgcap")
+sgcap_qkid <- "0001510099.0000.E0000WD77"
+qk_institutional(sgcap_qkid, yyyyqq=202401, agg=TRUE)
 }
 
 \dontshow{

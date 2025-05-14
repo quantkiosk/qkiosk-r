@@ -18,8 +18,8 @@ Institutional Ownership API example of large manager filing with submanager deta
     \item{\code{reportPeriod}}{period of report}
     \item{\code{filedDate}}{when the data was filed}
     \item{\code{inclMgrs}}{number of submanagers reported for. See \code{otherManager}}
-    \item{\code{normalizedIssuer}}{official 13f list name of instrument}
-    \item{\code{normalizedTitleOfClass}}{official 13f list title or class name of instrument}
+    \item{\code{issuer}}{name of instrument}
+    \item{\code{titleOfClass}}{title or class name of instrument}
     \item{\code{issuerSIC}}{official standardized industrial code}
     \item{\code{issuerSector}}{two-character sector code from QUANTkiosk™}
     \item{\code{issuerTicker}}{common exchange ticker}
@@ -34,8 +34,9 @@ Institutional Ownership API example of large manager filing with submanager deta
     \item{\code{votingAuthNone}}{number of shares of \sQuote{NONE} voting authority}
     \item{\code{portWgt}}{portfolio weight (QK™ calculated)}
     \item{\code{hasOtherManager}}{logical indicating if record is for other manager}
-    \item{\code{otherManager}}{reference number of other manager from filing}
-    \item{\code{otherManagerFileNumber}}{file number of other manager}
+    \item{\code{otherManager}}{reference number of other manager(s) from filing}
+    \item{\code{otherManagerName}}{name of other manager(s) from filing}
+    \item{\code{otherManagerFileNumber}}{file number of other manager(s)}
     \item{\code{QtrsHeld}}{quarters held (QK™ calculated)}
     \item{\code{QOQSshPrnAmt}}{quarter over quarter change in shares or principal amount of holding (QK™ calculated)}
     \item{\code{QOQValue}}{quarter over quarter change in value of holding (QK™ calculated)}
@@ -69,7 +70,7 @@ Additional fields not present in the official \sQuote{13F-HR} or \sQuote{13F-HR/
   \item issuerQkid
   \item issuerTicker
 }
-These fields are useful for tracking changes between quarters as well as intrafiling analysis. \code{otherManager} provides the reported reference number as filed
+These fields are useful for tracking changes between quarters as well as intrafiling analysis. \code{otherManager} and \code{otherManagerName} provides the reported reference number as filed
 for each entry. Details of this requirement are beyond this help page, but reference the official SEC documentation and rules for clarity. QK™ does not merge
 submanagers and instead reports the combined submanagers (if reported). For example, a 1;2 would mean the managers 1 and 2 share some aspect of the position.
 
@@ -112,12 +113,12 @@ str(deshaw)
 \dontrun{
 
 # code that downloads  D.E. Shaw Ownership data. 
-deshaw.cik <- 0001009207
-qk_institutional(deshaw.cik, yyyy=2024, qq=1, aggType="none")
+deshaw_qkid <- qk_search_mgr("de shaw") # 0001009207.0000.E0000LMPJ
+qk_institutional(deshaw_qkid, yyyyqq=202401, agg=FALSE)
 }
 
 \dontshow{
-stopifnot(all(dim(deshaw) == c(6481,29)))
+stopifnot(all(dim(deshaw) == c(6482,30)))
 }
 }
 \keyword{datasets}

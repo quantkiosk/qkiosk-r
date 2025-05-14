@@ -257,7 +257,7 @@ qk_summary.qk_df_institutional <- function(x, n=c(10,5), ...) {
   if(length(n) == 1)
     n <- c(n,n)
   fc <- function(x) {
-    cols <- c("normalizedIssuer","normalizedTitleOfClass","putCall","issuerSector","issuerTicker","shrsOrPrnAmt","QOQSshPrnAmt","value","QOQValue","portWgt","QOQPortWgt","QtrsHeld","hasOtherManager") 
+    cols <- c("issuer","titleOfClass","putCall","issuerSector","issuerTicker","shrsOrPrnAmt","QOQSshPrnAmt","value","QOQValue","portWgt","QOQPortWgt","QtrsHeld","hasOtherManager")
     cnames <- c("Name","Class","putCall","Sector","Symbol","SharesOrPrincipal","QOQ (SharesOrPrincipal)","Notional $","QOQ (Notional $)","Portfolio Wgt","QOQ (Port Wgt)", "Qtrs Held", "Other Mgrs")
     x <- x[,cols]
     colnames(x) <- cnames
