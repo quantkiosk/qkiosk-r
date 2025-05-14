@@ -38,7 +38,7 @@ qk_set_apikey("<YOUR_API_KEY>")
 >[!TIP]
 >```bash
 >## you can also set up your key in your shell to avoid having to set it in R
->## this is more permanent and definitely how you would do it in production>
+>## this is more permanent and definitely how you would do it in production
 >
 >export QK_API_KEY=<YOUR_API_KEY>
 >```
