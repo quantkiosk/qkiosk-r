@@ -74,9 +74,7 @@ positions held continuously by the exact combination of submanagers. The latter 
 \references{
 Ownership homepage: \url{https://www.quantkiosk.com/ownership}
 
-Ownership Dashboard: \url{https://api.quantkiosk.com/ownership}
-
-Ownership API: \url{https://www.quantkiosk.com/api/ownership}
+Ownership Dashboard: \url{https://one.quantkiosk.com/ownership}
 
 SG Capital Filings \url{https://www.sec.gov/edgar/browse/?CIK=0001510099}
 

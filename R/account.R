@@ -9,7 +9,7 @@ qk_account <- function(browser=FALSE) {
   if(resp$status_code != "200")
     stop("permission denied - verify your API key is set", call.=FALSE)
 
-  account <- fromJSON(rawToChar(resp$content))
+  account <- fromJSON(rawToChar(resp$content), simplifyVector=FALSE)
   class(account) <- "qkaccount"
   account
 }
