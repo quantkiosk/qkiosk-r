@@ -131,19 +131,38 @@ for yourself.
 >
 >The entity is most often the **CIK**, the instrument is an OpenFIGI **FIGI**, and the class is something that helps to quickly identify what this
 >instrument is.  Pretty simple, but unlike most everything you might have seen in a security master.
+>
+>Alibaba will serve as an example of what this looks like in practice
+>```
+>> BABA
+>  ALIBABA GROUP HOLDING-SP ADR 
+>  0001577552.0400.006G2JWB1
+>```
+> - *[ENTITY]* the 10 digit CIK assigned by the SEC to any entity that files in the US. Even foreign firms need one at times.
+> - *[CLS]* is the classification of the instrument. In this case the 0400 is an ADR tradable in the US. 0000 is used for the common equity - often Class A Ordinary, and there are many others available
+> - *[INSTRUMENT]* is the variable portion of the FIGI from OpenFIGI, which is quickly becoming the de-facto identifier - covering a billion+ instruments
+>
+>For entities that do not have instruments (e.g. a hedge fund or a CEO), we create a unique identifier such as **E0000Y7E8** like in Jane Street's case above.
 
+## Get some data.
 
-## Data API
+QK's job is to let you do _your_ job. Mapped, point-in-time, and even auditable - all from within your preferred platform - is how we make that happen. 
+To get a feel for this, we'll take a look at two foundational data:
 
-QK presents data in a way that allows you to both understand its source, as well as abstract it to be able to do your job. Mapped, point-in-time, and even auditable - all from within the client. 
-To get a feel for this, we'll take a look at one of the endpoints for *Ownership* data,
-specifically *Institutional Ownership*. This comes from the regulatory filings of large and (often) sophisticated managers. Someone like a Jane Street will help .
+- *Institutional Ownership*
+- *Fundamentals*
 
+Let's get started
+
+### Institutional Ownership
 ```
 
 ```
 
+### Fundamantals
 
+```
+```
 
 
 
