@@ -211,30 +211,6 @@ pitAsFiled <- function(pit, dt, full=FALSE) {
   pit
 }
 
-#############################pitAsFiled <- function(pit) {
-#############################  #message("converting full pit to asfiled\n")
-#############################  dups <- which(duplicated(pit$fpe))
-#############################  if(length(dups) > 0)
-#############################    pit <- pit[-dups,]
-#############################  ## TODO: FYTD, TTM
-#############################  rownames(pit) <- NULL
-#############################  pit
-#############################}
-#############################
-#############################pitAsOf <- function(pit, date=today()) {
-#############################  #message(sprintf("converting full pit to asof: %d\n",date))
-#############################  if(inherits(date,"Date") || inherits(date,"POSIXt")) 
-#############################    date <- as.integer(format(date,"%Y%m%d"))
-#############################  if(is.yyyymmdd(date))
-#############################    date <- as.integer(date)
-#############################  if(nrow(pit) == 0)
-#############################    return(NULL)
-#############################  pit <- pit[pit$asof <= date,] # subset to only data available on `date`
-#############################  pit <- pit[rev(!duplicated(rev(pit$fpe))),] # find dups from latest
-#############################  rownames(pit) <- NULL
-#############################  pit[, -match('asof',colnames(pit))]
-#############################}
-
 # INTERNAL calls
 .QKAPIDATA <- new.env(hash=TRUE)
 

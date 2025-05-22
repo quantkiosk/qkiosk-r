@@ -4,16 +4,8 @@
 
 .theme <- list(rowid=list(fg="208"),fg=list(int="33",dbl="35",chr="235",na="248"),highlight=list(bg=228))
 
-#.style <- function(x, colsep='│') {
-.pipesep <- iconv("\\u2502","c99","UTF-8")
+.pipesep <- if(l10n_info()[["UTF-8"]]) { "\u2502" } else { "|" }
 .style <- function(x, colsep=.pipesep, highlight, theme=.theme, maxwidth=getOption("width"), topn=getOption("qkiosk.df.topn",5), nrows=getOption("qkiosk.df.nrows",100)) {
-  #if(nrow(x) > nrows && missing(highlight)) {
-  #  top <- .style(x[seq(1,topn),], colsep, highlight, maxwidth, topn, nrows)
-  #  btm <- .style(x[seq(nrow(x)-topn,nrow(x)),], colsep, highlight, maxwidth, topn, nrows)
-  #  x <- paste0(top,"\n...\n\n",btm)
-  #  class(x) <- '.qkstyled'
-  #  return(x) 
-  #}
   hl <- rep(FALSE, len=nrow(x))
   if( !missing(highlight) ) {
     if(is.numeric(highlight) || is.logical(highlight)) {
@@ -72,7 +64,6 @@
       if(!is.na(middle) && row==middle)
         styled_rows[[i]][ii+1] <- "  ----\n"
 
-      #cat("rowlen:",nchar(styled_rows[[i]][[ii+1]]),"\n") 
       ii <- ii + 1
     }
     # only show colnames at bottom if displaying non-truncated table that does not wrap
