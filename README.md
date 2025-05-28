@@ -162,7 +162,7 @@ Let's get started
 
 ```
 
-### Fundamantals
+### Fundamentals
 
 ```
 ```
