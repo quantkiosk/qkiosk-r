@@ -1,7 +1,9 @@
 <img src="https://quantkiosk.com/assets/img/qk-logo.png" height="40" />
 
 >[!IMPORTANT]
-> **API keys will be rolled out to those signed up in the order they sign up. Join the queue [here](https://quantkiosk.com?ref=github-qkiosk-r)!!**
+> **FREE API keys are now enabled for all accounts. Get yours [here](https://quantkiosk.com?ref=github-qkiosk-r)!!**
+>
+> (Larger access paid plans will be open in the coming weeks)
 
 ## R Client
 
@@ -220,6 +222,8 @@ ca_202402_202501 <- qk_institutional(citadel, yyyyqq=202501, qtrs=4, agg=FALSE)
 # fetching 0001423053 for 202402 ...done.
 ```
 
+![image](https://github.com/user-attachments/assets/ec01fa81-021b-4389-bbc0-84061f6b7590)
+
 It's easy to see what Citadel Securities is holding, how much it has changed, and even see positions they no longer have.
 ```
 ca_202402_202501 |>
@@ -227,6 +231,7 @@ ca_202402_202501 |>
          select=c('reportPeriod','issuer','putCall','issuerQkid','issuerSector','value','QOQSshPrnAmt','otherManagerName','newOrDel')) 
 
 ```
+![image](https://github.com/user-attachments/assets/3206dd38-bfc3-4e34-97ea-38f2068de8f4)
 
 There are of course, a million ways to use this data - and we promise to share videos as well as deep dives as we move forward. We also would love to have anyone using the API share how they 
 are discovering insights into what the "Who's Who of Wall Street" are up to each quarter.
@@ -247,6 +252,7 @@ nvda_lg <- qk_beneficial(qk_ticker("NVDA"), yyyyqq=202200)
 ### Fundamentals
 
 ```
+# examples coming soon!
 ```
 
 
