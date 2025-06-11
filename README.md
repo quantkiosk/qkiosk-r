@@ -3,7 +3,7 @@
 >[!IMPORTANT]
 > **FREE API keys are now enabled for all accounts. Get yours [here](https://quantkiosk.com?ref=github-qkiosk-r)!!**
 >
-> (Larger access paid plans will be open in the coming weeks)
+> (Larger access paid plans will be open in the coming weeks as we finish backfill)
 
 ## R Client
 
