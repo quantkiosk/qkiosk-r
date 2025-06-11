@@ -30,5 +30,7 @@ qk_get_apikey <- function(req=TRUE) {
 print.qkaccount <- function(x, ...) {
   cat("\nQUANTkiosk Account (",x$AsOf,"):\n\n")
   cat("  Daily Quota:",x$Quota," (Hard Quota:",x$HardQuota,")\n  Daily Usage",x$Usage,"\n")
+  resets <- difftime(as.POSIXct(x$AsOf,format="%A, %d-%B-%y",tz='UTC') + 86400, as.POSIXct(x$AsOf,format="%A, %d-%B-%y %H:%M:%S",tz='UTC', units='hours'))
+  cat("\n  Daily quota resets in: ", sprintf("%0.2f",resets)," hours\n")
   cat("\nVisit https://quantkiosk.com/account to change your plan or explore offerings.\n\n")
 }

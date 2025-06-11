@@ -137,6 +137,7 @@ c("cik", "acceptance_time", "stmt", "item", "filed", "fpb", "fpe",
 print.qk_df <- function(x, ..., maxwidth=getOption("width"), display_cols=.qk_fn_display_cols, title="A QK Financials Data Frame", topn=getOption("qkiosk.print.topn",5), nrows=getOption("qkiosk.print.nrows",100),rerow=TRUE) {
 
   cat("\033[1;38;5;239m\033[3m",title,"\033[23m\033[22;39m\n")
+  cat("\033[1;38;5;244m\033[3m","Data licensed by QUANTkiosk\u2122. See terms for usage restriction.","\033[23m\033[22;39m\n")
 
   if(rerow)
     rownames(x) <- NULL
@@ -151,7 +152,7 @@ print.qk_df <- function(x, ..., maxwidth=getOption("width"), display_cols=.qk_fn
       cat(.style(x, highlight=highlight, topn=topn, nrows=nrows, maxwidth=maxwidth))
     } else {
       cat(.style(x[, display_cols], highlight=highlight, topn=topn, nrows=nrows, maxwidth=maxwidth))
-      cat(" \033[3;38;5;244m* ",ncol(x)-length(display_cols),"hidden cols - use full() to view\033[23;39m\n")
+      cat(" \033[3;38;5;244m* ",ncol(x)-length(display_cols),"hidden cols - use full() to view all",ncol(x),"columns\033[23;39m\n")
     }
   } else {
     print(data.frame())

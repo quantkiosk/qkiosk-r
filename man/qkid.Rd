@@ -53,12 +53,13 @@
 \alias{qk.LEI}
 \alias{qk.Name}
 \alias{as.Name}
+\encoding{UTF-8}
 \title{
-QKID Tools
+QKID™ Tools
 }
 \description{
 Functions to create, extract and convert entity and instrument identifiers
-within QUANTkiosk's QKID open symbology.
+within QUANTkiosk™'s QKID™ open symbology.
 }
 \usage{
 qk_search(x, type=c('issuer','manager','fund','person'), n=10)
@@ -130,19 +131,19 @@ a string representing a name
 Standard Industrial Classification (SIC) code
 }
   \item{sector}{
-QK Sector (see below)
+QK™ Sector (see below)
 }
   \item{\dots}{
 unused
 }
   \item{type}{
-optional conversion specifics, or one of \sQuote{issuer} or \sQuote{fund} in \code{qk_search}
+optional conversion specifics, or one of \sQuote{issuer} or \sQuote{fund} in \code{qk_search_co} or \code{qk_search_mgr}, respectively.
 }
   \item{src}{
-source used in construction (e.g. \code{qk.Ticker("AAPL")} => \sQuote{ticker})
+source used in construction (e.g. \code{qk_ticker("AAPL")} => \sQuote{ticker})
 }
   \item{srcid}{
-value used in construction (e.g. \code{qk.Ticker("AAPL")} => \sQuote{AAPL})
+value used in construction (e.g. \code{qk_ticker("AAPL")} => \sQuote{AAPL})
 }
   \item{retrieved}{
 date of retrieved (or created) qkid
@@ -153,21 +154,21 @@ number of search matches to return
 }
 \details{
 \R functions to allow for mapping and manipulation of
-QUANTkiosk's symbology as well as common identifiers.
+QUANTkiosk™'s symbology as well as common identifiers.
 }
 \value{
-QUANTkiosk's public identifier, known as \sQuote{QKID} is the central
-identifier used by the QK API. It is freely licensed under CC-BY-SA and
+QUANTkiosk™'s public identifier, known as \sQuote{QKID™} is the central
+identifier used by the QK™ API. It is freely licensed under CC-BY-SA and
 is designed to provide institutional quality symbology usable both within
 professional asset amanagement as well as for non-professional use.
 
 For a full discussion, please refer to official website below and
-the associated documentation. The \sQuote{QKID} is a portmantaeu identifier,
+the associated documentation. The \sQuote{QKID™} is a portmantaeu identifier,
 combining well-established entity and instrument identifiers into a linked
 symbology suitable for research and trading. There are three main components
-to a fixed-width \sQuote{QKID}:
+to a fixed-width \sQuote{QKID™}:
 
-\sQuote{QKID} can also be mapped to sectors and SIC codes.
+\sQuote{QKID™} can also be mapped to sectors and SIC codes.
 
 \itemize{
   \item ENTITY.CLS.INSTRUMENT
@@ -190,13 +191,13 @@ the \code{qk_search_mgr} function.
 
 }
 \references{
-Official QKID site: \url{https://www.quantkiosk.com/qkid}
+Official QKID™ site: \url{https://www.quantkiosk.com/qkid}
 }
 \author{
-QUANTkiosk
+QUANTkiosk™
 }
 \note{
-Point-in-time QKID queries are currently not available outside of a subscription,
+Point-in-time QKID™ queries are currently not available outside of a subscription,
 this may change in the future.
 }
 

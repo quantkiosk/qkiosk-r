@@ -13,7 +13,9 @@ full.qk_fn <- function(x, showfull=TRUE, ...) {
   x
 }
 
-qkiditems <- function(qkids,items) {
+qkiditems <- function(qkids,items,using=TRUE) {
+  oqkids <- qkids
+  oitems <- items
   if(length(qkids) < 1 || length(items) < 1)
     stop("requires at least one qkid and one item to be specified (e.g. qkids=qk_ticker('NVDA'), items='SALE')")
   if(!is.list(items))
@@ -23,7 +25,7 @@ qkiditems <- function(qkids,items) {
 
   id_items <- sapply(setNames(1:length(qkids),nm=qkids$srcid), function(q) lapply(items[q], function(i) paste(entity(qkids[q]),i,sep='.')))
   data_items <- lapply(setNames(1:length(qkids), nm = sprintf("CIK%010d",as.integer(entity(qkids)))), function(q) sapply(items[[q]], function(i) {l <- list(NULL); l}))
-  qkid_items <- list(id=id_items, data=data_items)
+  qkid_items <- list(id=id_items, data=data_items,qkids=oqkids,items=oitems,using=using)
   class(qkid_items) <- 'qkid_item'
   qkid_items
 }
@@ -34,6 +36,18 @@ print.qkid_item <- function(x, ...) {
 
 str.qkid_item <- function(object, ...) {
   str(object$id)
+}
+
+.FNCODES <- new.env()
+qk_fncodes <- function() {
+  if(exists('codes',envir=.FNCODES))
+    return(get('codes',envir=.FNCODES))
+  fncodes <- .reqQKID("itemcodes/fn/codes")
+  colnames(fncodes) <- c("stmt","code","desc")
+  fncodes <- split(fncodes, fncodes$stmt)
+  fncodes <- lapply(fncodes, function(.) { rownames(.) <- NULL; class(.) <- c('qk_df','data.frame'); . })
+  assign('codes', fncodes, envir=.FNCODES)
+  fncodes
 }
 
 qk_fn <- function(qkids,
@@ -58,7 +72,7 @@ qk_fn <- function(qkids,
     view <- "asfiled"
 
   if(is.null(qkid_items))
-    qkid_items <- qkiditems(qkids, items)
+    qkid_items <- qkiditems(qkids, items, using=FALSE)
 
   fd <- .FD(qkid_items, view=view, ticker=ticker, hide=hide, quiet=quiet, cache=cache)
   elapsed <- attr(fd, "elapsed")
@@ -102,10 +116,15 @@ qk_fn <- function(qkids,
     }
     arg_id_item <- paste(arg_id_item, collapse=",")
   }
-  
+
   if( nchar(arg_id_item) > 0) {
     req <- "https://api.qkiosk.io/data/fundamental"
     reqbody <- as.character(toJSON(list(apiKey=apiKey,id_item=arg_id_item,view=view),auto_unbox=TRUE))
+    if(!isTRUE(qkid_items$using)) {
+      ids <- paste(as.character(as.integer(substring(qkid_items$qkids$qkid,1,10))),collapse=',')
+      items <- paste(qkid_items$items,collapse=',')
+      reqbody <- as.character(toJSON(list(apiKey=apiKey,ids=ids,items=items,view=view),auto_unbox=TRUE))
+    }
   
     reqstring <- req
     if(hide) reqstring <- gsub(apiKey,"XXXX", reqstring)
@@ -114,6 +133,7 @@ qk_fn <- function(qkids,
     # using POST
     handle = new_handle()
     handle_setheaders(handle, "Content-Type"="application/json")
+    handle_setheaders(handle, `Accept-Encoding` = "gzip")
     handle_setopt(handle, customrequest = "POST")
     handle_setopt(handle, postfields = reqbody)
   
@@ -125,7 +145,7 @@ qk_fn <- function(qkids,
     if(res$View != view) {
       ## TODO: if asof was set and full pit is unavailable to subscriber, we need to warn
     }
-    view <- res$View # downgraded from pit to asfo if not available
+    view <- res$View # downgraded from pit to asof if not available
   
     if(resp$status_code != 200)
       stop(paste0("error: unable to complete request: ",paste(res$Errors,collapse=",")), call.=FALSE)
@@ -135,10 +155,10 @@ qk_fn <- function(qkids,
       fd <<- c(fd, list(res))
     }
     failure <- function(msg){
-      #cat("Oh noes! Request failed!", msg, "\n")
+      warning(msg)
     }
   
-    lapply(unlist(res$Urls), function(req) { curl_fetch_multi(req, success, failure) } )
+    lapply(unlist(res$Urls), function(req) { h <- new_handle();handle_setopt(h,connecttimeout=30);curl_fetch_multi(req, success, failure,handle=h) } )
     multi_run()
   
     status_code <- lapply(fd, function(resp) { resp$status_code })

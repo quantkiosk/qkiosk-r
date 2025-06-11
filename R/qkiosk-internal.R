@@ -90,8 +90,10 @@
   handle_setopt(handle, postfields = reqbody)
   
   resp <- curl_fetch_memory(req, handle)
-  if(resp$status_code != "200")
-    stop("permission denied - verify your API key is set", call.=FALSE)
+  if(resp$status_code != "200") {
+    warning(paste0("error retrieving ",id,":",resp$status_code), call.=FALSE)
+    return(NULL)
+  }
   hdrs <- parse_headers(resp$headers, multiple=TRUE)
   res <- fromJSON(rawToChar(resp$content),simplifyVector=FALSE)
 

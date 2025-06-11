@@ -3,7 +3,9 @@ qk_audit <- function(x, ...) {
 }
 qk_audit.default <- function(x, row, accn, fpe, open=FALSE, ctx=-1, ...) { 
   if(missing(row) && !is.null(attr(x, "highlight"))) {
-    row <- which(attr(x,"highlight"))
+    row <- attr(x,"highlight")
+    if(is.logical(row))
+      row <- which(row)
   }
   if( missing(row) || length(row) > 1 || row > nrow(x) )
     stop("`row` must specify a single obs of 'x'")

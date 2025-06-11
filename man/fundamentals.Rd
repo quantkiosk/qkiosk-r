@@ -1,15 +1,17 @@
 \name{qk_fn}
 \alias{qk_fn}
+\alias{qk_fncodes}
 \alias{qkiditems}
 \alias{pitAsOf}
 \alias{pitAsFiled}
 \alias{qk_select.qk_fn}
+\encoding{UTF-8}
 \title{
 Fundamentals Data
 }
 \description{
 Functions to get \sQuote{as-reported} and \sQuote{revised} fundamentals line item data
-from QK/Financials API.
+from QK™/Financials API.
 }
 \usage{
 qk_fn(qkids,
@@ -26,9 +28,11 @@ qk_fn(qkids,
       full = TRUE,
       cache = TRUE)
 
+qk_fncodes()
+
 \method{qk_select}{qk_fn}(x, id_item, i, j, ...)
 
-qkiditems(qkids,items)
+qkiditems(qkids,items,using=TRUE)
 
 pitAsOf(pit,dt = today(), full=FALSE)
 
@@ -36,13 +40,13 @@ pitAsFiled(pit, dt, full=FALSE)
 }
 \arguments{
   \item{qkids}{
-a vector of \code{qkid} objects using \code{qk.Ticker},\code{qk.Figi},\code{qk.Permid},\code{qk.Cik} or \code{as.qkid}. See \code{is.qkid} for more details.
+a vector of \code{qkid} objects using \code{qk_ticker},\code{qk_figi},\code{qk_permid},\code{qk_cik} or \code{qkid}. See \code{is.qkid} for more details.
 }
   \item{items}{
-a vector or list of vectors containing QUANTkiosk item codes (e.g. SALE, NI, AT, ATC) corresponding to US-GAAP, DEI, or other line item(s). 
+a vector or list of vectors containing QUANTkiosk™ item codes (e.g. SALE, NI, AT, ATC) corresponding to US-GAAP, DEI, or other line item(s). See qk_fncodes()
 }
   \item{qkid_items}{
-an object of class \code{qkid_item} created via \code{qk.QkidItem}. if specified, will ignore \code{qkids} and \code{items}. If \code{qkid_items=NULL} (default) 
+an object of class \code{qkid_item} created via \code{qkiditems}. if specified, will ignore \code{qkids} and \code{items}. If \code{qkid_items=NULL} (default) 
 \code{qkids} and \code{items} will be converted into a corresponding \code{qkid_object}.
 }
   \item{from}{
@@ -91,6 +95,9 @@ additional arguments if applicable
   \item{id_item}{
 a vector of id-items in form "TICKER.ITEM" to extract \code{data.frame} from \code{qk_fn} object.
 }
+  \item{using}{
+internal flag to indicate input form.
+}
   \item{i}{
 extract rows from \code{qk_select} call.
 }
@@ -99,6 +106,9 @@ extract colums from \code{qk_select} call.
 }
 }
 \details{
+To view current QUANTkiosk™ item codes call qk_fncodes(). This will return a list
+organized by supported statements. This is constantly expanding.
+
 For each item in \code{items} requested a request applied to every qkid in
 \code{qkids}. All responses are cached by default. This can be disabled using \code{cache=FALSE}.
 
@@ -130,10 +140,10 @@ If \code{full=TRUE} a nested-list of data.frames are returned with additional de
 
 }
 \references{
-SEC filing and reporting rule - add links!
+SEC EDGAR® filing and reporting rules.
 }
 \author{
-QUANTkiosk team.
+QUANTkiosk™ team.
 }
 \note{
 Depending on a user's subscription level, there may be restrictions on the universe of
@@ -148,6 +158,9 @@ See Also \code{\link{qkid}}
 \examples{
 
 \dontrun{
+# get list of all QK™ codes
+fncodes <- qk_fncodes()
+
 # Pfizer and J&J quarterly revenue (SALE) and net income (NI) 
 pfe <- qk_fn(qk_ticker(c("PFE","JNJ")), c("SALE","NI"))
 

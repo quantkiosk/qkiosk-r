@@ -70,6 +70,8 @@ diff.yyyymmdd <- function(x, lag = 1, differences = 1, ...) {
 }
 
 qtrsback <- function(yyyyqq, N=1) {
+  if(nchar(yyyyqq)==4)
+    yyyyqq <- yyyyqq * 100
   if(N==1) 
     return(yyyyqq)
   N <- N - 1L

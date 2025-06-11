@@ -17,6 +17,7 @@ export(
   highlight,
 
   # fundamentals
+  qk_fncodes,
   qkiditems,
   qk_fn,
 
@@ -111,7 +112,7 @@ S3method(full, qk_df)
 S3method(`[`, qk_df)
 S3method(to_ts, qk_df)
 S3method(to_df, qk_df)
-S3method(subset, qk_fn)
+S3method(subset, qk_df)
 
 S3method(print, qk_ts)
 S3method(as.xts, qk_ts)

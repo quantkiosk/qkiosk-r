@@ -58,12 +58,13 @@ qk_holders(qkid,
 the \sQuote{QKID™} of reporting institution or filer.
 }
   \item{yyyyqq}{
-An number of the form \sQuote{YYYYQQ} where \sQuote{YYYY} is a 4-digit year, and \sQuote{QQ} is
-a 2-digit quarter [01,02,03,04]. Use in conjuction with \code{qtrs} argument to request additional
-prior quarters in one call.
+a number of the form \sQuote{YYYYQQ} where \sQuote{YYYY} is a 4-digit year, and \sQuote{QQ} is
+a 2-digit quarter [00,01,02,03,04]. Use in conjuction with \code{qtrs} argument to request additional
+prior quarters in one call. Four digit values will be treated as a full year (i.e. \sQuote{YYYY}) and expanded
+to YYYY00.
 }
   \item{qtrs}{
-The number of quarters to request.
+number of previous  quarters to request (including current \code{yyyyqq}.
 }
   \item{form}{
 for \code{qk_beneficial} and \code{qk_activist} requests, one of
@@ -88,9 +89,20 @@ in an custom formatted \code{data.frame}. At it's core, the data is used to unde
 which participants have control over an entity. These participants file various forms
 depending on who they are and what their intent may be.
 
-Depending on the aggregation requested (\code{aggType}) the result will contain different fields. See the example
-package data \code{sgcap} and \code{deshaw} for specifics as well as details on what fields are.
+Ownership reporting periods vary based on regulatory rules. Some are quarterly (e.g. Institutional and Funds),
+whereas many are filed based on events (e.g. Insider, Beneficial/Activist). The arrival of the updates
+is dependent on filer and SEC rules. All requests are specified for the quarter a filing was made.
 
+To allow for consistent interface, \code{yyyyqq} is specified as the year \sQuote{yyyy} and the 2-digit quarter
+being requested. For example, the second quarter of 2023 would be \code{yyyyqq=202302}. To request a full year,
+one can use the special quarter \code{00}. To request all years use \code{yyyyqq=0} or \code{yyyyqq=000000}.
+
+All usage is metered by data requested, e.g. four quarters or one year are equal in credits used.
+
+For \sQuote{Institutional} (\code{qk_institutional}) aggregated (\code{agg=TRUE}) requests, we
+roll up other managers filed within the main filer's report to better see total positions and
+changes. If \code{agg=FALSE}, other managers are displayed as reported with quarter over quarter
+change columns reflecting changes in exact reporting lines.
 }
 
 \section{Institutional}{
@@ -112,7 +124,7 @@ The holders data includes all owners of a particular company, allowing the cross
 from all individual reporting firms by quarter and made available as new filings arrive. At present this only contains \sQuote{13F-HR} reporting, updated
 as filings arrive, including amendments to previous positions.
 }
-\section{Blockholders}{
+\section{Blockholders / Beneficial / Activist}{
 Any owner with a position greater than 5\% must file under SEC's \sQuote{Schedule 13G (SC 13G)} or \sQuote{Schedule 13D (SC 13D)}. These are 
 used to indicate control at or exceeding this threshold by one or more parties sharing control of the position.
 }
@@ -148,10 +160,17 @@ QUANTkiosk™
 
 \examples{
 \dontrun{
-citadelCik <- "1423053"
-citadel.holdings <- qk_institutional(citadelCik)
+citadel <- qk_search_mgr("citadel")
+citadel_h<- qk_institutional(citadel, yyyyqq=202301)
 
-nvda.holdings <- qk_holders(qk.Ticker("NVDA"), yyyy=2023, qq=2)
+# all qtrs of 2023
+citadel_h<- qk_institutional(citadel, yyyyqq=202300)
+
+# nvidia's institutional holders for 202501, 202404, 202403, 202402
+nvda_h <- qk_holders(qk_ticker("NVDA"), yyyyqq=202501, qtrs=4)
+
+# Restaurant Brands (QSR) block holders for 202501, 202404, 202403, 202402
+qsr_b <- qk_beneficial(qk_ticker("QSR"), yyyyqq=2025)
 }
 }
 \keyword{ data }
