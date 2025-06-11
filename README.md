@@ -3,7 +3,7 @@
 >[!IMPORTANT]
 > **FREE API keys are now enabled for all accounts. Get yours [here](https://quantkiosk.com?ref=github-qkiosk-r)!!**
 >
-> (Larger access paid plans will be open in the coming weeks as we finish backfill)
+> Paid plans will be open in the coming weeks as we finish backfill and add more features!
 
 ## R Client
 
@@ -251,9 +251,37 @@ nvda_lg <- qk_beneficial(qk_ticker("NVDA"), yyyyqq=202200)
 
 ### Fundamentals
 
+Fundamentals data is the lifeblood of a company. While prices are observable, financials are much harder to source
+consistently or correctly.  We source directly from filings, in a way only people who have used this data for
+investment at scale know how to do.
+
+Let's dig into a quick example to show off what you can do with a few lines of code.
 ```
-# examples coming soon!
+# There are hundreds of line items that are generally used - though 10s of 1000s of GAAP items are available.
+#
+# To see common ones we currently map you can use our reference function qk_fncodes
+qk_fncodes()
 ```
+<img width="621" alt="image" src="https://github.com/user-attachments/assets/3993d057-bcaf-4a1d-a696-aaf0931e6398" />
+
+From here, lets find Net Income (code NI) for UBER
+
+```
+uber_ni <- qk_fn(qk_ticker("UBER"), "NI")
+```
+<img width="1051" alt="image" src="https://github.com/user-attachments/assets/06d42814-99dc-4ba7-96de-ea72166bbb93" />
+
+You can also easily see where this data comes from using our state of the art auditing tools
+```
+qk_fn(qk_ticker("UBER"), "NI") |> to_df() |> tail() |> highlight(5)
+
+qk_fn(qk_ticker("UBER"), "NI") |> to_df() |> tail() |> highlight(5) |> qk_audit()
+```
+<img width="1022" alt="image" src="https://github.com/user-attachments/assets/3afa85af-168c-4c09-a5f7-8e13635e2d83" />
+
+<img width="1119" alt="image" src="https://github.com/user-attachments/assets/903a6d09-9f5d-416b-a484-449a7504ddc3" />
+
+
 
 
 
