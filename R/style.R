@@ -48,15 +48,15 @@
   styled_rows <- rep(list(NULL), length(w_breaks))
 
   for(i in 1:length(w_breaks)) {
-    styled_rows[[i]][1] <- paste0('\033[48;5;017m\033[38;1;097m',paste(sapply(header[c(1,w_breaks[[i]])], `[`, 1), collapse=colsep), '\033[39;0m\033[49;0m\n')
+    styled_rows[[i]][1] <- paste0('\033[48;5;017m\033[38;5;231m',paste(sapply(header[c(1,w_breaks[[i]])], `[`, 1), collapse=colsep), '\033[39;0m\033[49;0m\n')
     ii <- 1
     for(row in 1:length(rows)) {
 
       if(row %% 2 == 0) {
-        styled_rows[[i]][ii+1] <- paste0("\033[48;5;254m",paste(sapply(styled[c(1,w_breaks[[i]])], `[`, row), collapse=colsep), '\033[49;0m\n')
+        styled_rows[[i]][ii+1] <- paste0("\033[48;5;255m",paste(sapply(styled[c(1,w_breaks[[i]])], `[`, row), collapse=colsep), '\033[49;0m\n')
       } else {
         # terminals may view control characters as taking up space - pad exactly
-        styled_rows[[i]][ii+1] <- paste0("\033[48;0;000m",paste(sapply(styled[c(1,w_breaks[[i]])], `[`, row), collapse=colsep), '\033[00;0m\n')
+        styled_rows[[i]][ii+1] <- paste0("\033[48;5;231m",paste(sapply(styled[c(1,w_breaks[[i]])], `[`, row), collapse=colsep), '\033[00;0m\n')
       }
       if(isTRUE(hl[row]))
         styled_rows[[i]][ii+1] <- paste0("\033[48;5;",theme$highlight$bg,"m",paste(sapply(styled[c(1,w_breaks[[i]])], `[`, row), collapse=colsep), '\033[49;0m\n')
