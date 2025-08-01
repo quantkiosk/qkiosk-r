@@ -7,7 +7,7 @@ today <- function() {
 }
 
 yyyymmdd <- function(x=Sys.time(), tz=Sys.getenv("TZ")) {
-  if(is.numeric(x) && nchar(x) != 8) stop("x must be of form YYYYMMDD")
+  if(any(is.numeric(x) & nchar(x) != 8)) stop("x must be of form YYYYMMDD")
   if(missing(tz))
     tz <- Sys.getenv("TZ")
   if(tz == "")

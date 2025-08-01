@@ -51,10 +51,10 @@ qk_beneficial <- function(qkid, yyyyqq, qtrs=1, form=c("13D13G","13G","13D"), wa
     x <- data.frame()
   }
   rownames(x) <- NULL
-  class(x) <- c("qk_df_beneficial","data.frame")
+  class(x) <- c("qk_df_beneficial","qk_df","data.frame")
   x
 }
-qk_insider <- function(qkid, yyyyqq, qtrs=1, form=c("345","144"), wait=1, quiet=TRUE) {
+qk_insider <- function(qkid, yyyyqq, qtrs=1, form=c("insider","intent","sales"), wait=1, quiet=TRUE) {
   apiKey <- Sys.getenv("QK_API_KEY")
   if(apiKey == "") 
     stop("apiKey not found in QK_API_KEY environment variable. Set in shell or use `Sys.setenv` from R.")
@@ -64,8 +64,10 @@ qk_insider <- function(qkid, yyyyqq, qtrs=1, form=c("345","144"), wait=1, quiet=
 
   retType <- "csv"
 
+  if(!is.numeric(qtrs)) stop("qtrs= must be integer number of qtrs to retrieve including current requested qtr")
+
   form <- match.arg(form)
-  if(form == "144") stop("form 144 is not yest supported in this version")
+  form <- c(insider="345",intent="144/intent",sales="144/sales")[form]
   to_from <- qtrsback(yyyyqq,qtrs)
   yyyy <- sprintf("%04d",to_from %/% 100)
   qq <- sprintf("%02d",to_from %% 100)
@@ -99,7 +101,7 @@ qk_insider <- function(qkid, yyyyqq, qtrs=1, form=c("345","144"), wait=1, quiet=
     x <- data.frame()
   }
   rownames(x) <- NULL
-  class(x) <- c("qk_df_insider", "data.frame")
+  class(x) <- c("qk_df_insider", "qk_df","data.frame")
   x
 }
 
@@ -147,7 +149,7 @@ qk_holders <- function(qkid, yyyyqq, qtrs=1, wait=1, quiet=TRUE) {
     x <- data.frame()
   }
   rownames(x) <- NULL
-  class(x) <- c("qk_df_holders","data.frame")
+  class(x) <- c("qk_df_holders","qk_df","data.frame")
   x
 }
 
@@ -200,13 +202,13 @@ qk_institutional <- function(qkid, yyyyqq, qtrs=1, agg=TRUE, wait=0, quiet=TRUE)
     x <- data.frame()
   }
   rownames(x) <- NULL
-  class(x) <- c("qk_df_institutional","data.frame")
+  class(x) <- c("qk_df_institutional","qk_df","data.frame")
   x
 }
 
 `[.qkinstitutional` <- function(x, i, j, ...) {
   x <- x[i, j, ...]
-  class(x) <- c("qk_df_institutional","data.frame")
+  class(x) <- c("qk_df_institutional","qk_df","data.frame")
   x 
 }
 

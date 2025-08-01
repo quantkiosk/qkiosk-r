@@ -2,6 +2,8 @@
 \alias{qk_fn}
 \alias{qk_fncodes}
 \alias{qkiditems}
+\alias{pit_asof}
+\alias{pit_asfiled}
 \alias{pitAsOf}
 \alias{pitAsFiled}
 \alias{qk_select.qk_fn}
@@ -25,18 +27,17 @@ qk_fn(qkids,
       ticker = TRUE,
       hide = TRUE,
       quiet = TRUE,
-      full = TRUE,
       cache = TRUE)
 
 qk_fncodes()
 
-\method{qk_select}{qk_fn}(x, id_item, i, j, ...)
+\method{qk_select}{qk_fn}(x, id_item, id, item, i, j, ...)
 
 qkiditems(qkids,items,using=TRUE)
 
-pitAsOf(pit,dt = today(), full=FALSE)
+pitAsOf(pit,dt = today(), qtrs=1)
 
-pitAsFiled(pit, dt, full=FALSE)
+pitAsFiled(pit, dt = today(), qtrs=1)
 }
 \arguments{
   \item{qkids}{
@@ -74,9 +75,6 @@ hide API Key from verbose (\code{quiet=FALSE}) output.
   \item{quiet}{
 control verbosity.
 }
-  \item{full}{
-controls output (deprecated)
-}
   \item{cache}{
 defaults to \code{TRUE}
 }
@@ -86,6 +84,9 @@ defaults to \code{TRUE}
   \item{dt}{
 date (yyyymmdd) used for point-in-time calculation. This will be converted using \code{as.yyyymmdd}.
 }
+  \item{qtrs}{
+number of quarters to extract
+}
   \item{x}{
 an object of \code{qk_fn}
 }
@@ -93,7 +94,13 @@ an object of \code{qk_fn}
 additional arguments if applicable
 }
   \item{id_item}{
-a vector of id-items in form "TICKER.ITEM" to extract \code{data.frame} from \code{qk_fn} object.
+a vector of id-items in form \sQuote{TICKER.ITEM} to extract \code{data.frame} from \code{qk_fn} object.
+}
+  \item{id}{
+the ticker of the entity for extraction in \code{qk_select}. See \code{id_item} argument
+}
+  \item{item}{
+a vector or list of vectors containing QUANTkiosk™ item codes (e.g. SALE, NI, AT, ATC) corresponding to US-GAAP, DEI, or other line item(s). See qk_fncodes()
 }
   \item{using}{
 internal flag to indicate input form.
@@ -154,6 +161,7 @@ data. See \url{https://quantkiosk.com/point-in-time} for a full discussion of th
 
 \seealso{
 See Also \code{\link{qkid}}
+See Also \code{\link{qk_fncodes}}
 }
 \examples{
 

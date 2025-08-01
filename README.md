@@ -58,6 +58,8 @@ qk_set_apikey("<YOUR_API_KEY>")
 ># crox        Crocs Institutional Holders Details By Issuer
 ># deshaw      D.E. Shaw Institutional Ownership Details (Including Submanagers)
 ># nke         Nike (NKE) Insider Ownership Data
+># nvda_intent Nvidia (NVDA) Restricted or Control Shares Intention to Sell
+># nvda_sales  Nvidia (NVDA) Restricted or Control Shares Sold
 ># pershing    Pershing Square Beneficial and Activist Details
 ># pfe         Pfizer (PFE) Revenue Data
 ># sgcap       SG Capital Institutional Ownership Details (Aggregated)

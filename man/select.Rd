@@ -25,7 +25,7 @@ Generic functions to extract, transform and display QUANTkiosk api data to commo
 qk_select(x, ...)
 
 to_df(x, ...)
-as.qk_df(x, showfull=FALSE)
+as.qk_df(x, view="", showfull=FALSE, cls="qk_df")
 
 to_ts(x, ...)
 \method{to_ts}{qk_fn}(x, i='fq', dt='cyqtr', ...)
@@ -50,6 +50,9 @@ highlight(x, ...)
   \item{x}{
 Object to transform. These are dispatched to object specific methods when appropriate.
 }
+  \item{view}{
+internal view represented for use in pit functions
+}
   \item{showfull}{
 Display all hidden columns.
 }
@@ -61,6 +64,9 @@ Column to use for indexing by time (to_ts)
 }
   \item{style}{
 background color for highlighting (not yet implemented)
+}
+  \item{cls}{
+additional classes to add to conversion
 }
   \item{\dots}{
 Additional arguments depending on object class.

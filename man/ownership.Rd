@@ -28,7 +28,7 @@ qk_institutional(qkid,
 qk_insider(qkid,
            yyyyqq,
            qtrs=1,
-           form = c('345', '144'),
+           form = c('insider', 'intent', 'sales'),
            wait = 1,
            quiet = TRUE)
 
@@ -69,7 +69,7 @@ number of previous  quarters to request (including current \code{yyyyqq}.
   \item{form}{
 for \code{qk_beneficial} and \code{qk_activist} requests, one of
 \sQuote{13D} (activist), \sQuote{13G} (passive), \sQuote{13D13G} (activist + passive). For
-\code{qk_insider} requests one of \sQuote{345} (insider) or \sQuote{144} (insider intent).
+\code{qk_insider} requests one of \sQuote{insider} (345), \sQuote{intent} or \sQuote{sales} (form 144).
 }
   \item{agg}{
 if \code{TRUE}, all other managers reporting are rolled up into one record, otherwise
@@ -116,8 +116,9 @@ duplicate for insiders of a company to describe their ownership rights, includin
 shares. These are filed after a change in ownership.
 }
 \section{Insider Intent}{
-Insider Intent is a newer form, only made public in the last few years. This is used to indicate the intention to buy or sell, \emph{but not the
-actual purchase or sale}. These are filed by \sQuote{insiders} of a company using form \sQuote{144}.
+Insider Intent is a newer form, only required to be electronically filed in the last few years. This is used to indicate the intention to buy or sell, \emph{but not the
+actual purchase or sale}. These are filed by \sQuote{insiders} of a company using form \sQuote{144}. This is split into \sQuote{intent} disclosures, as well as any
+\sQuote{sale} in the 3 months prior to the filing.
 }
 \section{Holders}{
 The holders data includes all owners of a particular company, allowing the cross sectional intitutional holdings in one call. This data is aggregated
@@ -153,6 +154,8 @@ Small filer example: \code{\link{sgcap}}
 Large filer example with submanagers: \code{\link{deshaw}}
 
 Holders example: \code{\link{crox}}
+
+Benficial Owner example: \code{\link{pershing}}
 }
 \author{
 QUANTkiosk™
@@ -168,6 +171,15 @@ citadel_h<- qk_institutional(citadel, yyyyqq=202300)
 
 # nvidia's institutional holders for 202501, 202404, 202403, 202402
 nvda_h <- qk_holders(qk_ticker("NVDA"), yyyyqq=202501, qtrs=4)
+
+# nvidia's intent to sell 202501, 202404, 202403, 202402
+nvda_insider<- qk_insider(qk_ticker("NVDA"), yyyyqq=202501, qtrs=4, form="insider")
+
+# nvidia's intent to sell 202501, 202404, 202403, 202402
+nvda_intent <- qk_insider(qk_ticker("NVDA"), yyyyqq=202501, qtrs=4, form="intent")
+
+# nvidia's intent to sell 202501, 202404, 202403, 202402
+nvda_sales <- qk_insider(qk_ticker("NVDA"), yyyyqq=202501, qtrs=4, form="sales")
 
 # Restaurant Brands (QSR) block holders for 202501, 202404, 202403, 202402
 qsr_b <- qk_beneficial(qk_ticker("QSR"), yyyyqq=2025)

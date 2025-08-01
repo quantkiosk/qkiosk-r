@@ -1,8 +1,8 @@
 Package: qkiosk
 Type: Package
 Title: R Client for QUANTkiosk
-Version: 0.2.18
-Imports: curl, jsonlite, stringdist
+Version: 0.2.20
+Imports: curl, jsonlite, stringdist, zoo
 Depends: xts
 LazyData: yes
 Date: 2024-09-05

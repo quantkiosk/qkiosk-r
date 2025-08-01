@@ -2,6 +2,8 @@ qk_audit <- function(x, ...) {
   UseMethod('qk_audit')
 }
 qk_audit.default <- function(x, row, accn, fpe, open=FALSE, ctx=-1, ...) { 
+  if(missing(row) && nrow(x) == 1)
+    row <- 1
   if(missing(row) && !is.null(attr(x, "highlight"))) {
     row <- attr(x,"highlight")
     if(is.logical(row))

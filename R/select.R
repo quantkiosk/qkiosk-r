@@ -1,15 +1,41 @@
+subset.qk_fn <- function(x, ...) {
+  x1 <- subset(x[], ...)
+  as.qk_df(x1, view=attr(x,"view"), showfull=attr(x,"showfull"))
+}
+
+transform.qk_fn <- function(`_data`, ...) {
+  x1 <- transform(`_data`[], ...)
+  as.qk_df(x1, view=attr(`_data`,"view"), showfull=attr(`_data`,"showfull"))
+}
+
 qk_select <- function(x, ...) {
   UseMethod("qk_select")
 }
 
-subset.qk_fn <- function(x, ...) {
-  x1 <- subset(x[], ...)
-  as.qk_df(x1, showfull=attr(x,"showfull"))
-}
+qk_select.qk_fn <- function(x, id_item, id, item, i, j, ...) {
+## List of 5
+##  $ id   :List of 1
+##   ..$ CROX: chr "0001334036.SALE"
+##  $ data :List of 1
+##   ..$ CIK0001334036:List of 1
+##   .. ..$ SALE: NULL
+##  $ qkids:Class 'qkid'  hidden list of 4
+##   ..$ qkid     : chr "0001334036.0000.001SDGFR8"
+##   ..$ src      : chr "ticker"
+##   ..$ srcid    : chr "CROX"
+##   ..$ retrieved: 'yyyymmdd' int 20250618
+##  $ items: chr "SALE"
+##  $ using: logi FALSE
 
-`[.qk_fn` <- to_df.qk_fn <- qk_select.qk_fn <- function(x, id_item, i, j, ...) {
-  showfull <- attr(x, 'showfull')
+  oattr <- attributes(x)
   qi <- attr(x, "qkid_items")$id
+  if(!missing(id)) {
+    ## this won't work
+    items <- lapply(which(sapply(x, function(.) .$cik[1]) == id),function(.) x[[.]])
+  } else
+  if(!missing(item)) {
+    items <- lapply(which(sapply(x, function(.) .$item[1]) == item),function(.) x[[.]])
+  } else
   if(missing(id_item)) {
     items <- x
   } else {
@@ -17,7 +43,13 @@ subset.qk_fn <- function(x, ...) {
       x[[match(id_item,gsub("(.*?)[.].*[.](.*)", "\\1.\\2", unlist(lapply(names(qi), function(nm) paste(nm, qi[[nm]], sep=".")))))]]
     })
   }
-
+  attributes(items) <- oattr
+  items
+}
+`[.qk_fn` <- to_df.qk_fn <- function(x, id_item, id, item, i, j, ...) {
+  showfull <- attr(x, 'showfull')
+  view <- attr(x, 'view')
+  items <- qk_select(x, id_item, id, item, i, j, ...)
   x <- do.call(rbind, items)
   if(!missing(i) &&  missing(j)) {
     x <- x[i,,drop=FALSE]
@@ -29,7 +61,7 @@ subset.qk_fn <- function(x, ...) {
 
   rownames(x) <- NULL
   
-  as.qk_df(x, showfull=showfull)
+  as.qk_df(x, showfull=showfull, view=view)
 }
 
 to_ts <- function(x, ...) {
@@ -58,7 +90,9 @@ to_ts.qk_df <- function(x, i='fq', dt='cyqtr', ...) {
   x
 }
 print.qk_ts <- function(x, ...) {
-  print(as.qk_df(as.data.frame(x), showfull=TRUE))
+  df <- as.qk_df(as.data.frame(x), showfull=TRUE)
+  rownames(df) <- index(as.xts(x))
+  print(df)
 }
 
 to_df <- function(x, ...) {
@@ -77,9 +111,10 @@ as.data.frame.qk_fn <- function(x, ...) {
   qk_select(x)
 }
 
-as.qk_df <- function(x, showfull=FALSE) {
-  class(x) <- c("qk_df", "data.frame")
+as.qk_df <- function(x, view="", showfull=FALSE, cls='qk_df') {
+  class(x) <- unique(c(cls, "data.frame"))
   attr(x, "showfull") <- showfull
+  attr(x, "view") <- view
   x
 }
 
@@ -91,11 +126,13 @@ full.qk_df <- function(x, showfull=TRUE, ...) {
   x 
 }
 
-head.qk_df <- function(x, ...) { sf <- attr(x, "showfull"); x <- head(as.data.frame(x), ...); rownames(x) <- NULL; as.qk_df(x,sf) }
-tail.qk_df <- function(x, ...) { sf <- attr(x, "showfull"); x <- tail(as.data.frame(x), ...); rownames(x) <- NULL; as.qk_df(x,sf) }
+head.qk_df <- function(x, ...) { cls <- class(x); sf <- attr(x, "showfull"); v <- attr(x,"view"); x <- head(as.data.frame(x), ...); rownames(x) <- NULL; as.qk_df(x,view=v,showfull=sf,cls=cls) }
+tail.qk_df <- function(x, ...) { cls <- class(x); sf <- attr(x, "showfull"); v <- attr(x,"view"); x <- tail(as.data.frame(x), ...); rownames(x) <- NULL; as.qk_df(x,view=v,showfull=sf,cls=cls) }
 `[.qk_df` <- function(x, i, j, drop=FALSE, rerow=TRUE, ...) {
+  cls <- class(x)
   x <- as.data.frame(x)
-  sf <- TRUE
+  sf <- attr(x, 'showfull')
+  view <- attr(x, 'view')
   if(!missing(i) &&  missing(j)) {
     x <- x[i,,drop=drop]
   } else if( missing(i) && !missing(j)) {
@@ -107,14 +144,25 @@ tail.qk_df <- function(x, ...) { sf <- attr(x, "showfull"); x <- tail(as.data.fr
   }
   if(rerow)
     rownames(x) <- NULL
-  as.qk_df(x, showfull=sf)
+  if(drop && NCOL(x)==1)
+    return(x)
+  as.qk_df(x, view=view,showfull=sf,cls)
 }
 subset.qk_df <- function(x, ...) {
+  cls <- class(x)
   sf <- attributes(x)$showfull
+  v <- attributes(x)$view
   x <- subset.data.frame(x, ...)
   attr(x,'showfull') <- sf
+  attr(x,'view') <- v
   rownames(x) <- NULL
+  class(x) <- cls
   x
+}
+transform.qk_df <- function(`_data`, ...) {
+  cls <- class(`_data`)
+  x1 <- transform.data.frame(`_data`[], ...)
+  as.qk_df(x1, view=attr(`_data`,"view"), showfull=attr(`_data`,"showfull"),cls)
 }
 
 highlight <- function(x, ...) {
@@ -133,6 +181,11 @@ highlight.data.frame <- function(x, i, style=list(bg='yellow'), ...) {
 c("cik", "acceptance_time", "stmt", "item", "filed", "fpb", "fpe", 
 "fqd", "fp", "fqtr", "cyqtr", "fq", "fytd", "ttm", "ann", "rstmt"
 )
+.qk_fn_hidden_cols <- 
+c("pik", "acceptance_utc", "unit", "form", "filename", "accn", 
+"fye", "fyeq", "fpe2filed", "filed40", "ffiled", "cyear", "cqtr", 
+"rptq", "rptqd", "rpty", "rptyd", "rstmt.q", "rstmt.y", "iq", 
+"asof", "concept_id", "fqpy", "fytdpy")
 
 print.qk_df <- function(x, ..., maxwidth=getOption("width"), display_cols=.qk_fn_display_cols, title="A QK Financials Data Frame", topn=getOption("qkiosk.print.topn",5), nrows=getOption("qkiosk.print.nrows",100),rerow=TRUE) {
 

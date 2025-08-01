@@ -2,7 +2,6 @@
 \alias{qkiosk-package}
 \alias{qkiosk}
 \alias{qk_fund}
-\alias{qk_univ}
 \docType{package}
 \title{
 \packageTitle{qkiosk}

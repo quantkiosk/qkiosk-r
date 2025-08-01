@@ -3,6 +3,7 @@ import(curl,jsonlite,xts)
 importFrom("stats", "setNames", "na.omit")
 importFrom("utils", "str", "read.csv", "head", "tail", "unzip", "browseURL", "download.file","menu")
 importFrom("xts","as.xts")
+importFrom("zoo","index")
 importFrom("stringdist","stringdist")
 
 export(
@@ -13,6 +14,8 @@ export(
   to_df,
   to_ts,
 
+  as.qk_df,
+
   full,
   highlight,
 
@@ -21,11 +24,15 @@ export(
   qkiditems,
   qk_fn,
 
+  pit_asfiled,
+  pit_asof,
+
   pitAsFiled,
   pitAsOf,
 
   # account
   qk_account,
+  qk_download,
   qk_set_apikey,
   qk_get_apikey,
 
@@ -101,6 +108,7 @@ S3method(to_df, data.frame)
 S3method(to_ts, qk_fn)
 S3method(`[`, qk_fn)
 S3method(subset, qk_fn)
+S3method(transform, qk_fn)
 S3method(full, qk_fn)
 S3method(as.data.frame, qk_fn)
 
@@ -113,6 +121,7 @@ S3method(`[`, qk_df)
 S3method(to_ts, qk_df)
 S3method(to_df, qk_df)
 S3method(subset, qk_df)
+S3method(transform, qk_df)
 
 S3method(print, qk_ts)
 S3method(as.xts, qk_ts)

@@ -1,4 +1,4 @@
-.fmtcol <- function(x, big.mark=NA) { if(is.na(big.mark)) as.character(x) else format(x, big.mark=big.mark) } 
+.fmtcol <- function(x, big.mark=NA) { x <- gsub("\t","  ",x); if(is.na(big.mark)) as.character(x) else format(x, big.mark=big.mark) } 
 .p <- function(...) paste(..., sep="")
 
 

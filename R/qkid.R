@@ -29,7 +29,11 @@ qk_search_person <- function(x,n=10) qk_search(x,type='person',n=n)
 qk_search_fund <- function(x,n=10) qk_search(x,type='fund',n=n)
 
 qk_search_mgr <- function(x,n=10) qk_search(x,type='manager',n=n)[menu(qk_search(x,type='manager', n=n)$srcid)]
-qk_search_co <- function(x,n=10) qk_search(x,type='issuer',n=n)[menu(qk_search(x,type='issuer', n=n)$srcid)]
+qk_search_co <- function(x,n=10) {
+  res <- qk_search(x,type='issuer',n=n)
+  res[menu(paste(res$srcid,"\033[38;5;35m",to_ticker(res),"\033[39m"))]
+  #[menu(qk_search(x,type='issuer', n=n)$srcid)]
+}
 
 qk_search <- function(x, type=c('issuer','manager','fund','person'), n=10) {
   type <- match.arg(type)

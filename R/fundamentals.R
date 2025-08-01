@@ -29,6 +29,18 @@ qkiditems <- function(qkids,items,using=TRUE) {
   class(qkid_items) <- 'qkid_item'
   qkid_items
 }
+create_qkiditem <- function(fn, id, item) {
+  qi <- attributes(fn)$qkid_items
+  if(missing(id))
+    id <- names(qi$id) 
+  if(missing(item))
+    item <- qi$items
+  lapply(setNames(id,nm=id), function(id) {
+    w_id <- which(!is.na(match(gsub("(.*?)[.].*[.](.*)", "\\1",unlist(lapply(names(qi$id), function(nm) paste(nm,qi$id[[nm]], sep = ".")))), id)))
+    w_item <- which(!is.na(match(gsub("(.*?)[.].*[.](.*)", "\\2",unlist(lapply(names(qi$id), function(nm) paste(nm,qi$id[[nm]], sep = ".")))), item)))
+    t(t(as.data.frame(qi$id)))[ intersect(w_id,w_item) ]
+  })
+}
 
 print.qkid_item <- function(x, ...) {
   print(x$id)
@@ -60,7 +72,7 @@ qk_fn <- function(qkids,
                aspit=getOption("qk.aspit",FALSE),
                ticker=TRUE,
                hide=TRUE, quiet=TRUE,
-               full=TRUE, cache=TRUE) {
+               cache=TRUE) {
 
   if(as.integer(from) > as.integer(to) || (as.integer(from) > 0 && as.integer(from) < 20000101))
     stop("'from' must be after 20000101 and before 'to' or a negative offset")
@@ -119,11 +131,11 @@ qk_fn <- function(qkids,
 
   if( nchar(arg_id_item) > 0) {
     req <- "https://api.qkiosk.io/data/fundamental"
-    reqbody <- as.character(toJSON(list(apiKey=apiKey,id_item=arg_id_item,view=view),auto_unbox=TRUE))
+    reqbody <- as.character(toJSON(list(apiKey=apiKey,id_item=arg_id_item,view=view,version=getOption("fn_version","")),auto_unbox=TRUE))
     if(!isTRUE(qkid_items$using)) {
       ids <- paste(as.character(as.integer(substring(qkid_items$qkids$qkid,1,10))),collapse=',')
       items <- paste(qkid_items$items,collapse=',')
-      reqbody <- as.character(toJSON(list(apiKey=apiKey,ids=ids,items=items,view=view),auto_unbox=TRUE))
+      reqbody <- as.character(toJSON(list(apiKey=apiKey,ids=ids,items=items,view=view,version=getOption("fn_version","")),auto_unbox=TRUE))
     }
   
     reqstring <- req
@@ -189,46 +201,58 @@ qk_fn <- function(qkids,
 addTTM <- function(x) {
   # add FP lagged fq and fytd - e.g. fq          -> fq
   #                                    [2022,Q1] ->   [2021,Q1]
-  for(q in 1:4) x$fqpy[x$fqtr==q] <- c(NA,head(x[x$fqtr==q,'fq'],-1))
-  for(q in 1:4) x$fytdpy[x$fqtr==q] <- c(NA,head(x[x$fqtr==q,'fytd'],-1))
+  #x <- as.data.frame(x)
+  for(q in 1:4) x$fqpy[x$fqtr==q] <- c(NA,head(x[x$fqtr==q,'fq',drop=TRUE],-1))
+  for(q in 1:4) x$fytdpy[x$fqtr==q] <- c(NA,head(x[x$fqtr==q,'fytd',drop=TRUE],-1))
 
   x$ann <- NA
-  x$ann[x$fqtr==4] <- x[x$fqtr==4,'fytd']
-  x$lastann <- locf(x[,'ann'])
+  x$ann[x$fqtr==4] <- x[x$fqtr==4,'fytd',drop=TRUE]
+  x$lastann <- locf(x[,'ann',drop=TRUE])
 
-  x$ttm=ifelse(is.na(x$ann), x$lastann + x$fq - x$fqpy, x$ann)
+  x$ttm <- ifelse(is.na(x$ann), x$lastann + x$fq - x$fqpy, x$ann)
   # FIXME: for BS this needs to be mean
   x <- x[,-which(colnames(x)=='lastann')]
+  #class(x) <- c('qk_df','data.frame')
   x
 }
 
 pitCols <- c('cyqtr','cik','item','stmt','rstmt','iq','filed','fpe','fqtr','fq','fytd','ann','ttm','fqpy','fytdpy','fqd')
 ## client functions for PIT
-pitAsOf <- function(pit, dt=today(), full=FALSE) {
+pit_asof <- pitAsOf <- function(pit, dt=today(), qtrs=1) {
+  if(inherits(pit, 'qk_fn')) {
+    view <- attr(pit, 'view')
+    return(as.qk_df(do.call(rbind, lapply(pit, function(.) pitAsOf(as.qk_df(., view=view), dt=dt, qtrs=qtrs)))))
+  }
   if(inherits(dt,"Date") || inherits(dt,"POSIXt")) 
     dt <- as.integer(format(dt,"%Y%m%d"))
+  pit <- pit[as.integer(pit$filed) <= as.integer(dt),] # subset to only data available on `dt`
   if(nrow(pit) == 0)
     return(NULL)
-  pit <- pit[as.integer(pit$filed) <= as.integer(dt),] # subset to only data available on `dt`
   pit <- pit[rev(!duplicated(rev(pit$fpe))),] # find dups from latest
-  pit <- addTTM(pit)
+  if(attr(pit,"view") == "pit")
+    pit <- addTTM(pit)
   rownames(pit) <- NULL
-  if(!full)
-    pit <- pit[,pitCols]
-  pit
+  tail(pit, qtrs)
 }
-pitAsFiled <- function(pit, dt, full=FALSE) {
-  if(!missing(dt)) message("passed 'dt' ignored")
+pit_asfiled <- pitAsFiled <- function(pit, dt=today(), qtrs=1) {
+  if(inherits(pit, 'qk_fn')) {
+    view <- attr(pit, 'view')
+    return(as.qk_df(do.call(rbind, lapply(pit, function(.) pitAsFiled(as.qk_df(., view=view), dt=dt, qtrs=qtrs)))))
+  }
+  if(inherits(dt,"Date") || inherits(dt,"POSIXt")) 
+    dt <- as.integer(format(dt,"%Y%m%d"))
+  pit <- pit[as.integer(pit$filed) <= as.integer(dt),] # subset to only data available on `dt`
+  if(nrow(pit) == 0)
+    return(NULL)
   dups <- which(duplicated(pit$fpe))
   if(length(dups) > 0)
     pit <- pit[-dups,]
   if(nrow(pit) == 0)
     return(NULL)
-  pit <- addTTM(pit)
+  if(attr(pit,"view") == "pit")
+    pit <- addTTM(pit)
   rownames(pit) <- NULL
-  if(!full)
-    pit <- pit[,pitCols]
-  pit
+  tail(pit, qtrs)
 }
 
 # INTERNAL calls

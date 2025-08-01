@@ -75,13 +75,17 @@
   invisible(TRUE)
 }
 
-.reqQKID <- function(id) {
+.reqQKID <- function(id,dt=NA) {
   apiKey <- Sys.getenv("QK_API_KEY")
   if(apiKey == "")
     stop("apiKey not found in QK_API_KEY environment variable. Set in shell or use `Sys.setenv` from R.")
 
   req <- "https://api.qkiosk.io/data/qkid"
-  reqbody <- as.character(toJSON(list(apiKey=apiKey,ids=id),auto_unbox=TRUE))
+  if(!is.na(dt)) {
+    reqbody <- as.character(toJSON(list(apiKey=apiKey,ids=id,dt=dt),auto_unbox=TRUE))
+  } else {
+    reqbody <- as.character(toJSON(list(apiKey=apiKey,ids=id),auto_unbox=TRUE))
+  }
   
   # using POST
   handle = new_handle()
