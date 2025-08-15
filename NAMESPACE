@@ -3,7 +3,7 @@ import(curl,jsonlite,xts)
 importFrom("stats", "setNames", "na.omit")
 importFrom("utils", "str", "read.csv", "head", "tail", "unzip", "browseURL", "download.file","menu")
 importFrom("xts","as.xts")
-importFrom("zoo","index")
+importFrom("zoo","index","rollapply")
 importFrom("stringdist","stringdist")
 
 export(
@@ -23,6 +23,7 @@ export(
   qk_fncodes,
   qkiditems,
   qk_fn,
+  qk_clearcache,
 
   pit_asfiled,
   pit_asof,

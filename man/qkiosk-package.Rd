@@ -2,6 +2,7 @@
 \alias{qkiosk-package}
 \alias{qkiosk}
 \alias{qk_fund}
+\alias{qk_clearcache}
 \docType{package}
 \title{
 \packageTitle{qkiosk}

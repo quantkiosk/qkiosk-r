@@ -72,11 +72,11 @@ as.xts.qk_ts <- function(x, ...) {
   x
 }
 
-to_ts.qk_fn <- function(x, i='fq', dt='cyqtr', ...) {
+to_ts.qk_fn <- function(x, i='fq', dt='fpe', ...) {
   to_ts.qk_df(to_df(x), i=i, dt=dt)
 }
 
-to_ts.qk_df <- function(x, i='fq', dt='cyqtr', ...) {
+to_ts.qk_df <- function(x, i='fq', dt='fpe', ...) {
   x <- split(x, list(x$cik, x$item))
   xx <- lapply(x, function(x) {
     xi <- x[,i]
@@ -111,10 +111,13 @@ as.data.frame.qk_fn <- function(x, ...) {
   qk_select(x)
 }
 
-as.qk_df <- function(x, view="", showfull=FALSE, cls='qk_df') {
+as.qk_df <- function(x, view="", showfull=FALSE, cls='qk_df', highlight=NULL) {
+  if(!is.data.frame(x))
+    stop('conversion to qk_df requires a data.frame. did you mean to_df?')
   class(x) <- unique(c(cls, "data.frame"))
   attr(x, "showfull") <- showfull
   attr(x, "view") <- view
+  attr(x, "highlight") <- highlight
   x
 }
 
@@ -126,8 +129,28 @@ full.qk_df <- function(x, showfull=TRUE, ...) {
   x 
 }
 
-head.qk_df <- function(x, ...) { cls <- class(x); sf <- attr(x, "showfull"); v <- attr(x,"view"); x <- head(as.data.frame(x), ...); rownames(x) <- NULL; as.qk_df(x,view=v,showfull=sf,cls=cls) }
-tail.qk_df <- function(x, ...) { cls <- class(x); sf <- attr(x, "showfull"); v <- attr(x,"view"); x <- tail(as.data.frame(x), ...); rownames(x) <- NULL; as.qk_df(x,view=v,showfull=sf,cls=cls) }
+head.qk_df <- function(x, ...) {
+  cls <- class(x)
+  sf <- attr(x, "showfull")
+  v <- attr(x,"view")
+  x <- head(as.data.frame(x), ...)
+  hl <- attr(x,"highlight")
+  if(!is.null(hl))
+    hl <- head(hl, ...)
+  rownames(x) <- NULL
+  as.qk_df(x,view=v,showfull=sf,cls=cls, highlight=hl)
+}
+tail.qk_df <- function(x, ...) {
+  cls <- class(x);
+  sf <- attr(x, "showfull")
+  v <- attr(x,"view")
+  x <- tail(as.data.frame(x), ...)
+  hl <- attr(x,"highlight")
+  if(!is.null(hl))
+    hl <- tail(hl, ...)
+  rownames(x) <- NULL
+  as.qk_df(x,view=v,showfull=sf,cls=cls, highlight=hl)
+}
 `[.qk_df` <- function(x, i, j, drop=FALSE, rerow=TRUE, ...) {
   cls <- class(x)
   x <- as.data.frame(x)
@@ -152,9 +175,15 @@ subset.qk_df <- function(x, ...) {
   cls <- class(x)
   sf <- attributes(x)$showfull
   v <- attributes(x)$view
-  x <- subset.data.frame(x, ...)
+  hl <- attr(x,"highlight")
+  rownames(x) <- 1:nrow(x)
+  x <- as.data.frame(x)
+  x <- subset(x, ...)
   attr(x,'showfull') <- sf
   attr(x,'view') <- v
+  if(!is.null(hl)) {
+    attr(x,'highlight') <- hl[as.integer(rownames(x))]
+  }
   rownames(x) <- NULL
   class(x) <- cls
   x
@@ -162,19 +191,7 @@ subset.qk_df <- function(x, ...) {
 transform.qk_df <- function(`_data`, ...) {
   cls <- class(`_data`)
   x1 <- transform.data.frame(`_data`[], ...)
-  as.qk_df(x1, view=attr(`_data`,"view"), showfull=attr(`_data`,"showfull"),cls)
-}
-
-highlight <- function(x, ...) {
-  UseMethod("highlight")
-}
-highlight.data.frame <- function(x, i, style=list(bg='yellow'), ...) {
-  mc <- match.call(expand.dots=FALSE)
-  if(isTRUE(is.call(mc$i))) {
-    i <- with(x, eval(mc$i), ...)
-  }
-  attr(x,"highlight") <- structure(i, style=style)
-  x
+  as.qk_df(x1, view=attr(`_data`,"view"), showfull=attr(`_data`,"showfull"),highlight=attr(`_data`,"highlight"),cls)
 }
 
 .qk_fn_display_cols <- 

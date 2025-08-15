@@ -1,16 +1,37 @@
 .fmtcol <- function(x, big.mark=NA) { x <- gsub("\t","  ",x); if(is.na(big.mark)) as.character(x) else format(x, big.mark=big.mark) } 
 .p <- function(...) paste(..., sep="")
 
+color_names <- c(yellow=228, green=155, blue=159, red=202)
+highlight <- function(x, ...) {
+  UseMethod("highlight")
+}
+highlight.data.frame <- function(x, i, color='yellow', ...) {
+  if(is.character(color) && !color %in% names(color_names))
+    stop("color must be one of '",paste(names(color_names)),"' or an ANSI rgb color (0-255)")
+  if(is.character(color))
+    color <- color_names[color]
+  hl <- attr(x, "highlight")
+  if(is.null(hl))
+    hl <- rep(-1, len=nrow(x))
+  mc <- match.call(expand.dots=FALSE)
+  if(isTRUE(is.call(mc$i))) {
+    i <- with(x,eval(mc$i))
+    if(is.logical(i))
+      i <- which(with(x, eval(mc$i), ...))
+  }
+  if(length(i) > 0)
+    hl[i] <- color
+  attr(x,"highlight") <- hl
+  x
+}
 
 .theme <- list(rowid=list(fg="208"),fg=list(int="33",dbl="35",chr="235",na="248"),highlight=list(bg=228))
 
 .pipesep <- if(l10n_info()[["UTF-8"]]) { "\u2502" } else { "|" }
-.style <- function(x, colsep=.pipesep, highlight, theme=.theme, maxwidth=getOption("width"), topn=getOption("qkiosk.df.topn",5), nrows=getOption("qkiosk.df.nrows",100)) {
-  hl <- rep(FALSE, len=nrow(x))
-  if( !missing(highlight) ) {
-    if(is.numeric(highlight) || is.logical(highlight)) {
-      hl[highlight] <- TRUE
-    }
+.style <- function(x, colsep=.pipesep, highlight, theme=getOption("qkiosk.theme",.theme), maxwidth=getOption("width"), topn=getOption("qkiosk.df.topn",5), nrows=getOption("qkiosk.df.nrows",100)) {
+  hl <- rep(-1, len=nrow(x))
+  if( !missing(highlight) && !is.null(highlight) ) {
+    hl <- highlight
   }
 
   middle <- NA
@@ -20,6 +41,7 @@
     prows <- c(1:topn,(nrow(x)-topn+1):nrow(x))
     middle <- topn+1
   }
+  hl <- hl[rows]
 
   padding <- nchar(colsep)
   ncharna <- function(ch) ifelse(is.na(ch), 2, nchar(ch))
@@ -58,8 +80,8 @@
         # terminals may view control characters as taking up space - pad exactly
         styled_rows[[i]][ii+1] <- paste0("\033[48;5;231m",paste(sapply(styled[c(1,w_breaks[[i]])], `[`, row), collapse=colsep), '\033[00;0m\n')
       }
-      if(isTRUE(hl[row]))
-        styled_rows[[i]][ii+1] <- paste0("\033[48;5;",theme$highlight$bg,"m",paste(sapply(styled[c(1,w_breaks[[i]])], `[`, row), collapse=colsep), '\033[49;0m\n')
+      if(hl[row] >= 0 && hl[row] < 256)
+        styled_rows[[i]][ii+1] <- paste0("\033[48;5;",hl[row],"m",paste(sapply(styled[c(1,w_breaks[[i]])], `[`, row), collapse=colsep), '\033[49;0m\n')
 
       if(!is.na(middle) && row==middle)
         styled_rows[[i]][ii+1] <- "  ----\n"

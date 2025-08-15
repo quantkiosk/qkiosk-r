@@ -3,7 +3,7 @@
 print.qk_fn <- function(x, ...) {
   items <- unique(c(sapply(attributes(x)$qkid_item$data, names)))
   ids <- unique(names(attributes(x)$qkid_item$id))
-  cat("\033[1;38;5;208mQK\033[22;39m Financials  ",length(ids)," x ",length(items),"\n")
+  cat("\033[1;38;5;208mQK\033[22;39m Financials  ",length(ids)," x ",length(items),paste0("(",attributes(x)$view,")"),"\n")
   cat(.p("  \033[3mcompanies\033[0m: [", paste(head(ids),collapse=", "), ifelse(length(ids)>6,"...",""),"]\n"))
   cat(.p("  \033[3mitems\033[0m: [", paste(head(items),collapse=", "), ifelse(length(items)>6,", ...",""),"]\n"))
 }
@@ -177,7 +177,7 @@ qk_fn <- function(qkids,
     content_type <- lapply(fd, function(resp) { resp$type })
     headers <- lapply(fd, function(resp) { parse_headers(resp$headers, multiple=TRUE) })
     # as.POSIXct(gsub("Last-Modified: ...,.","","Last-Modified: Tue, 04 Mar 2025 01:14:10 GMT"), format="%d %b %Y %H:%M:%S", tz="GMT")
-    content <- lapply(fd, function(resp) { read.csv(textConnection(rawToChar(resp$content))) })
+    content <- lapply(fd, function(resp) { read.csv(textConnection(rawToChar(resp$content)), colClasses=c(fq='double',fytd='double',rptq='double',rpty='double')) })
     id_item <- lapply(fd, function(resp) gsub(".*/fundamental/[a-z]+?/(.*?)/(CIK.*)[.].*[?].*", "\\2,\\1",resp$url))
   
     idItem <- res$IdItem[match(sapply(fd, function(.) .$url), unlist(res$Urls))]
@@ -202,17 +202,20 @@ addTTM <- function(x) {
   # add FP lagged fq and fytd - e.g. fq          -> fq
   #                                    [2022,Q1] ->   [2021,Q1]
   #x <- as.data.frame(x)
+  is_interval <- TRUE
+  if(all(is.na(x$fytd)))
+    is_interval <- FALSE
   for(q in 1:4) x$fqpy[x$fqtr==q] <- c(NA,head(x[x$fqtr==q,'fq',drop=TRUE],-1))
   for(q in 1:4) x$fytdpy[x$fqtr==q] <- c(NA,head(x[x$fqtr==q,'fytd',drop=TRUE],-1))
 
   x$ann <- NA
-  x$ann[x$fqtr==4] <- x[x$fqtr==4,'fytd',drop=TRUE]
+  x$ann[x$fqtr==4] <- x[x$fqtr==4,ifelse(is_interval,'fytd','fq'),drop=TRUE]
   x$lastann <- locf(x[,'ann',drop=TRUE])
 
   x$ttm <- ifelse(is.na(x$ann), x$lastann + x$fq - x$fqpy, x$ann)
-  # FIXME: for BS this needs to be mean
+  if(!is_interval)
+    x$ttm <- rollapply(x$fq, 4, sum, fill = NA, align = "right")/4
   x <- x[,-which(colnames(x)=='lastann')]
-  #class(x) <- c('qk_df','data.frame')
   x
 }
 
@@ -221,8 +224,10 @@ pitCols <- c('cyqtr','cik','item','stmt','rstmt','iq','filed','fpe','fqtr','fq',
 pit_asof <- pitAsOf <- function(pit, dt=today(), qtrs=1) {
   if(inherits(pit, 'qk_fn')) {
     view <- attr(pit, 'view')
-    return(as.qk_df(do.call(rbind, lapply(pit, function(.) pitAsOf(as.qk_df(., view=view), dt=dt, qtrs=qtrs)))))
+    return(as.qk_df(do.call(rbind, Filter(is.data.frame,lapply(pit, function(.) pit_asof(as.qk_df(., view=view), dt=dt, qtrs=qtrs))))))
   }
+  if(qtrs < 0)
+    qtrs <- length(unique(to_df(pit)$fpe))
   if(inherits(dt,"Date") || inherits(dt,"POSIXt")) 
     dt <- as.integer(format(dt,"%Y%m%d"))
   pit <- pit[as.integer(pit$filed) <= as.integer(dt),] # subset to only data available on `dt`
@@ -237,8 +242,10 @@ pit_asof <- pitAsOf <- function(pit, dt=today(), qtrs=1) {
 pit_asfiled <- pitAsFiled <- function(pit, dt=today(), qtrs=1) {
   if(inherits(pit, 'qk_fn')) {
     view <- attr(pit, 'view')
-    return(as.qk_df(do.call(rbind, lapply(pit, function(.) pitAsFiled(as.qk_df(., view=view), dt=dt, qtrs=qtrs)))))
+    return(as.qk_df(do.call(rbind, Filter(is.data.frame,lapply(pit, function(.) pit_asfiled(as.qk_df(., view=view), dt=dt, qtrs=qtrs))))))
   }
+  if(qtrs < 0)
+    qtrs <- length(unique(to_df(pit)$fpe))
   if(inherits(dt,"Date") || inherits(dt,"POSIXt")) 
     dt <- as.integer(format(dt,"%Y%m%d"))
   pit <- pit[as.integer(pit$filed) <= as.integer(dt),] # subset to only data available on `dt`

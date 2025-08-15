@@ -25,11 +25,11 @@ Generic functions to extract, transform and display QUANTkiosk api data to commo
 qk_select(x, ...)
 
 to_df(x, ...)
-as.qk_df(x, view="", showfull=FALSE, cls="qk_df")
+as.qk_df(x, view="", showfull=FALSE, cls="qk_df", highlight=NULL)
 
 to_ts(x, ...)
-\method{to_ts}{qk_fn}(x, i='fq', dt='cyqtr', ...)
-\method{to_ts}{qk_df}(x, i='fq', dt='cyqtr', ...)
+\method{to_ts}{qk_fn}(x, i='fq', dt='fpe', ...)
+\method{to_ts}{qk_df}(x, i='fq', dt='fpe', ...)
 
 full(x, showfull=TRUE, ...)
 \method{full}{qk_fn}(x, showfull=TRUE, ...)
@@ -43,7 +43,7 @@ full(x, showfull=TRUE, ...)
 \method{tail}{qk_df}(x, ...)
 
 highlight(x, ...)
-\method{highlight}{data.frame}(x, i, style=list(bg='yellow'),...)
+\method{highlight}{data.frame}(x, i, color='yellow', ...)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -56,14 +56,17 @@ internal view represented for use in pit functions
   \item{showfull}{
 Display all hidden columns.
 }
+  \item{highlight}{
+internal use
+}
   \item{i}{
 Row selection
 }
   \item{dt}{
 Column to use for indexing by time (to_ts)
 }
-  \item{style}{
-background color for highlighting (not yet implemented)
+  \item{color}{
+background color for highlighting
 }
   \item{cls}{
 additional classes to add to conversion
@@ -82,6 +85,7 @@ Central to manipulation of these data, the package provides a variety of \code{s
 head(crox)
 
 highlight(crox, 2:3)
+crox |> highlight(2) |> highlight(3,'green')
 }
 \keyword{ manip }
 \keyword{ data }

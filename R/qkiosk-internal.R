@@ -1,3 +1,7 @@
+qk_clearcache <- function() {
+  .clearQKAPIDATA()
+}
+
 .QKID_CIK <- new.env(hash=TRUE)
 .cikMapping <- function() {
   if(length(.QKID_CIK)>0) return(TRUE)
