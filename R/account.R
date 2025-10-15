@@ -55,6 +55,15 @@ qk_download <- function(type = c("data", "univ"), n = 10) {
   resp <- curl_fetch_memory(url)
   if(resp$status_code != "200")
     stop("download access not available", call.=FALSE)
-
-  read.csv(textConnection(rawToChar(resp$content)))
+  type <- gsub(".*[.](.*)$", "\\1", grep("Content-Disposition", parse_headers(resp$headers), value=TRUE))
+  if(type == "csv") {
+    dat <- read.csv(textConnection(rawToChar(resp$content)))
+  } else
+  if(type == "psv") {
+    dat <- read.delim(textConnection(rawToChar(resp$content)),sep="|")
+  } else
+  if(type == "json") {
+    dat <- fromJSON(textConnection(rawToChar(resp$content)))
+  }
+  dat
 }

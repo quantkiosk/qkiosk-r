@@ -43,7 +43,7 @@ full(x, showfull=TRUE, ...)
 \method{tail}{qk_df}(x, ...)
 
 highlight(x, ...)
-\method{highlight}{data.frame}(x, i, color='yellow', ...)
+\method{highlight}{data.frame}(x, i, color='yellow', bg, fg, ...)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -67,6 +67,12 @@ Column to use for indexing by time (to_ts)
 }
   \item{color}{
 background color for highlighting
+}
+  \item{bg}{
+background color for highlighting. color names or ansi 256 colors.
+}
+  \item{fg}{
+foreground color for highlighting. color names or ansi 256 colors.
 }
   \item{cls}{
 additional classes to add to conversion

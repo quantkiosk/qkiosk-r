@@ -5,7 +5,7 @@ color_names <- c(yellow=228, green=155, blue=159, red=202)
 highlight <- function(x, ...) {
   UseMethod("highlight")
 }
-highlight.data.frame <- function(x, i, color='yellow', ...) {
+highlight.data.frame <- function(x, i, color='yellow', bg, fg, ...) {
   if(is.character(color) && !color %in% names(color_names))
     stop("color must be one of '",paste(names(color_names)),"' or an ANSI rgb color (0-255)")
   if(is.character(color))
@@ -26,6 +26,19 @@ highlight.data.frame <- function(x, i, color='yellow', ...) {
 }
 
 .theme <- list(rowid=list(fg="208"),fg=list(int="33",dbl="35",chr="235",na="248"),highlight=list(bg=228))
+
+.to_html <- function(x, maxwidth=170) {
+  if(requireNamespace("fansi", quietly = TRUE)) {
+    ansi <- paste(capture.output(print(x,maxwidth=maxwidth)),collapse="\n")
+    ansi <- gsub('"',"&quot;",gsub(" ", "&nbsp;", gsub("\n", "<br>", ansi)))
+    #ansi <- html_esc(ansi)
+    html <- fansi::to_html(ansi,warn=FALSE)
+    html <- paste0("<div style='font-family:monospace;font-size:9pt;'>",html,"</div>")
+    cat(html)
+  } else {
+    stop( "Package \"fansi\" must be installed to print using html.", call. = FALSE)
+  }
+}
 
 .pipesep <- if(l10n_info()[["UTF-8"]]) { "\u2502" } else { "|" }
 .style <- function(x, colsep=.pipesep, highlight, theme=getOption("qkiosk.theme",.theme), maxwidth=getOption("width"), topn=getOption("qkiosk.df.topn",5), nrows=getOption("qkiosk.df.nrows",100)) {

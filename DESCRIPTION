@@ -1,11 +1,12 @@
 Package: qkiosk
 Type: Package
 Title: R Client for QUANTkiosk
-Version: 0.2.22
+Version: 0.2.24
 Imports: curl, jsonlite, stringdist, zoo
 Depends: xts
+Suggests: fansi
 LazyData: yes
-Date: 2025-08-15
+Date: 2025-10-09
 Author: Jeffrey A Ryan
 Maintainer: Jeffrey A. Ryan <jeff@quantkiosk.com>
 Description: R package to interact with QUANTkiosk API.

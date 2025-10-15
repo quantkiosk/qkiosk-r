@@ -5,6 +5,7 @@ importFrom("utils", "str", "read.csv", "head", "tail", "unzip", "browseURL", "do
 importFrom("xts","as.xts")
 importFrom("zoo","index","rollapply")
 importFrom("stringdist","stringdist")
+importFrom("utils", "capture.output", "read.delim")
 
 export(
 

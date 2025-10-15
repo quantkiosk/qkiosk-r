@@ -1,6 +1,7 @@
 qk_fund <- function() { stop("not yet implemented") }
 
 qk_activist <- function(qkid, yyyyqq, qtrs=1, form=c("13D","13D13G"), wait=1, quiet=TRUE) {
+  form <- match.arg(form)
   qk_beneficial(qkid,yyyyqq,qtrs,form=form,quiet=quiet,wait=wait)
 }
 
@@ -69,6 +70,7 @@ qk_insider <- function(qkid, yyyyqq, qtrs=1, form=c("insider","intent","sales"),
   form <- match.arg(form)
   form <- c(insider="345",intent="144/intent",sales="144/sales")[form]
   to_from <- qtrsback(yyyyqq,qtrs)
+  years <- unique(to_from %/% 100)
   yyyy <- sprintf("%04d",to_from %/% 100)
   qq <- sprintf("%02d",to_from %% 100)
 
@@ -76,10 +78,10 @@ qk_insider <- function(qkid, yyyyqq, qtrs=1, form=c("insider","intent","sales"),
   ticker <- to_ticker(qkid)
 
   reqs <- 1
-  totreqs <- length(qq)
+  totreqs <- length(years)
   x <- lapply(1:totreqs, function(i) {
-    cat(sprintf("fetching %s (%s) for %s%s ...",ticker,id,yyyy[i],qq[i]))
-    req <- sprintf("https://api.qkiosk.io/data/ownership?form=%s&apiKey=%s&ids=%s&aggType=a&yyyy=%s&qq=%s&by=%s&retType=%s",form,apiKey,id,yyyy[i],qq[i],by,retType)
+    cat(sprintf("fetching %s (%s) for %s00 ...",ticker,id,years[i]))
+    req <- sprintf("https://api.qkiosk.io/data/ownership?form=%s&apiKey=%s&ids=%s&aggType=a&yyyy=%s&qq=00&by=%s&retType=%s",form,apiKey,id,years[i],by,retType)
     reqstring <- req
     reqstring <- gsub(apiKey,"XXXX", reqstring)
     if(!quiet) cat("requesting: ",reqstring,"\n")
@@ -118,14 +120,20 @@ qk_holders <- function(qkid, yyyyqq, qtrs=1, wait=1, quiet=TRUE) {
   yyyy <- sprintf("%04d",to_from %/% 100)
   qq <- sprintf("%02d",to_from %% 100)
 
-  id <- entity(qkid)
+  use_entity <- FALSE
+  id <- instrument(qkid)
+  if(cls(qkid) == "0000") {
+    id <- entity(qkid)
+    use_entity <- TRUE
+  }
+
   ticker <- to_ticker(qkid)
 
   reqs <- 0
   totreqs <- length(qq)
   x <- lapply(1:totreqs, function(i) {
     cat(sprintf("fetching %s (%s) for %s%s ...",ticker,id,yyyy[i],qq[i]))
-    req <- sprintf("https://api.qkiosk.io/data/instrument?apiKey=%s&id=%s&yyyy=%s&qq=%s&id2=1974",apiKey,id,yyyy[i],qq[i])
+    req <- sprintf("https://api.qkiosk.io/data/instrument?apiKey=%s&id=%s&yyyy=%s&qq=%s&id2=1974&entity=%s",apiKey,id,yyyy[i],qq[i],ifelse(use_entity,"true","false"))
     reqs <- reqs + 1
     rstart <- Sys.time()
     reqstring <- req
