@@ -21,7 +21,8 @@ Official interface to [QUANTkiosk](https://quantkiosk.com) data api.
 
 ### Installation
 ```r
-# install remotes using install.packages("remotes")
+# make sure you have the "remotes" package installed, if not
+# you need to run install.packages("remotes") first.
 require(remotes)
 
 install_github("https://github.com/quantkiosk/qkiosk-r")
