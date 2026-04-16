@@ -73,6 +73,7 @@ qk_fn <- function(qkids,
                ticker=TRUE,
                hide=TRUE, quiet=TRUE,
                cache=TRUE) {
+  check_qkid(qkids)
 
   if(as.integer(from) > as.integer(to) || (as.integer(from) > 0 && as.integer(from) < 20000101))
     stop("'from' must be after 20000101 and before 'to' or a negative offset")
@@ -224,7 +225,7 @@ pitCols <- c('cyqtr','cik','item','stmt','rstmt','iq','filed','fpe','fqtr','fq',
 pit_asof <- pitAsOf <- function(pit, dt=today(), qtrs=1) {
   if(inherits(pit, 'qk_fn')) {
     view <- attr(pit, 'view')
-    return(as.qk_df(do.call(rbind, Filter(is.data.frame,lapply(pit, function(.) pit_asof(as.qk_df(., view=view), dt=dt, qtrs=qtrs))))))
+    return(as.qk_df(do.call(rbind, Filter(is.data.frame,lapply(pit, function(.) pit_asof(as.qk_df(., view=view), dt=dt, qtrs=qtrs)))),cls=c("qk_df_fn", "qk_df")))
   }
   if(qtrs < 0)
     qtrs <- length(unique(to_df(pit)$fpe))
@@ -237,12 +238,13 @@ pit_asof <- pitAsOf <- function(pit, dt=today(), qtrs=1) {
   if(attr(pit,"view") == "pit")
     pit <- addTTM(pit)
   rownames(pit) <- NULL
+  #class(pit) <- c("qk_df_fn", "qk_df","data.frame")
   tail(pit, qtrs)
 }
 pit_asfiled <- pitAsFiled <- function(pit, dt=today(), qtrs=1) {
   if(inherits(pit, 'qk_fn')) {
     view <- attr(pit, 'view')
-    return(as.qk_df(do.call(rbind, Filter(is.data.frame,lapply(pit, function(.) pit_asfiled(as.qk_df(., view=view), dt=dt, qtrs=qtrs))))))
+    return(as.qk_df(do.call(rbind, Filter(is.data.frame,lapply(pit, function(.) pit_asfiled(as.qk_df(., view=view), dt=dt, qtrs=qtrs)))),cls=c("qk_df_fn", "qk_df")))
   }
   if(qtrs < 0)
     qtrs <- length(unique(to_df(pit)$fpe))
@@ -259,6 +261,7 @@ pit_asfiled <- pitAsFiled <- function(pit, dt=today(), qtrs=1) {
   if(attr(pit,"view") == "pit")
     pit <- addTTM(pit)
   rownames(pit) <- NULL
+  #class(pit) <- c("qk_df_fn", "qk_df","data.frame")
   tail(pit, qtrs)
 }
 
@@ -297,5 +300,10 @@ locf <- function(x) {
   x
 }
 
-#to_xts.qk_fn <- function(x, ...) xts(x[[1]][,c('fpe','filed','fq','fytd','ttm')], order.by=as.Date(as.yyyymmdd(x[[1]]$cyqtr)))
-#print.qk_fn <- function(x, ...) print(x[[1]][,c('item','cyqtr','fpe','filed','fq','fytd','ttm')])
+.qk_fn_display_cols <-
+c("cik", "acceptance_time", "stmt", "item", "filed", "fpb", "fpe",
+"fqd", "fp", "fqtr", "cyqtr", "fq", "fytd", "ttm", "ann", "rstmt"
+)
+print.qk_df_fn <- function(x, ...) {
+  print.qk_df(x, ..., display_cols=.qk_fn_display_cols, title="QK Fundamentals Data Frame")
+}

@@ -46,6 +46,7 @@ Neither \code{dt=} or \code{src=} are implemented in this version.
 See Also \code{\link{qkid}}
 }
 \examples{
+\dontrun{
 qk100 <- qk_univ("QK100")
 
 # top 1000 widely firms
@@ -53,6 +54,7 @@ qk1k <- qk_univ("QK1000")
 
 # next 2000 most widely held firms
 qk2k <- qk_univ("QK2000")
+}
 
 }
 % Add one or more standard keywords, see file 'KEYWORDS' in the

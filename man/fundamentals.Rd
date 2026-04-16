@@ -41,7 +41,7 @@ pitAsFiled(pit, dt = today(), qtrs=1)
 }
 \arguments{
   \item{qkids}{
-a vector of \code{qkid} objects using \code{qk_ticker},\code{qk_figi},\code{qk_permid},\code{qk_cik} or \code{qkid}. See \code{is.qkid} for more details.
+a \code{qkid} vector representing the \sQuote{QKID™} of reporting institution or filer. Use \code{qk_cik}, \code{qk_ticker}, or similar. See \code{qkid} for details.
 }
   \item{items}{
 a vector or list of vectors containing QUANTkiosk™ item codes (e.g. SALE, NI, AT, ATC) corresponding to US-GAAP, DEI, or other line item(s). See qk_fncodes()

@@ -1,6 +1,6 @@
 subset.qk_fn <- function(x, ...) {
   x1 <- subset(x[], ...)
-  as.qk_df(x1, view=attr(x,"view"), showfull=attr(x,"showfull"))
+  as.qk_df(x1, view=attr(x,"view"), showfull=attr(x,"showfull"), cls=c("qk_df_fn","qk_df","data.frame"))
 }
 
 transform.qk_fn <- function(`_data`, ...) {
@@ -61,7 +61,7 @@ qk_select.qk_fn <- function(x, id_item, id, item, i, j, ...) {
 
   rownames(x) <- NULL
   
-  as.qk_df(x, showfull=showfull, view=view)
+  as.qk_df(x, showfull=showfull, view=view, cls=c("qk_df_fn","qk_df","data.frame"))
 }
 
 to_ts <- function(x, ...) {
@@ -92,7 +92,7 @@ to_ts.qk_df <- function(x, i='fq', dt='fpe', ...) {
 print.qk_ts <- function(x, ...) {
   df <- as.qk_df(as.data.frame(x), showfull=TRUE)
   rownames(df) <- index(as.xts(x))
-  print(df)
+  print(df, rerow=FALSE)
 }
 
 to_df <- function(x, ...) {
@@ -194,24 +194,16 @@ transform.qk_df <- function(`_data`, ...) {
   as.qk_df(x1, view=attr(`_data`,"view"), showfull=attr(`_data`,"showfull"),highlight=attr(`_data`,"highlight"),cls)
 }
 
-.qk_fn_display_cols <- 
-c("cik", "acceptance_time", "stmt", "item", "filed", "fpb", "fpe", 
-"fqd", "fp", "fqtr", "cyqtr", "fq", "fytd", "ttm", "ann", "rstmt"
-)
-.qk_fn_hidden_cols <- 
-c("pik", "acceptance_utc", "unit", "form", "filename", "accn", 
-"fye", "fyeq", "fpe2filed", "filed40", "ffiled", "cyear", "cqtr", 
-"rptq", "rptqd", "rpty", "rptyd", "rstmt.q", "rstmt.y", "iq", 
-"asof", "concept_id", "fqpy", "fytdpy")
-
-print.qk_df <- function(x, ..., maxwidth=getOption("width"), display_cols=.qk_fn_display_cols, title="A QK Financials Data Frame", topn=getOption("qkiosk.print.topn",5), nrows=getOption("qkiosk.print.nrows",100),rerow=TRUE, html=FALSE) {
+print.qk_df <- function(x, ..., maxwidth=getOption("width"), display_cols=NULL, digits=NULL, title="A QK Data Frame", topn=getOption("qkiosk.print.topn",5), nrows=getOption("qkiosk.print.nrows",100),rerow=TRUE, html=FALSE) {
   if(isTRUE(html)) {
-    .to_html(x)
+    if(missing(maxwidth))
+      maxwidth <- 170
+    .to_html(x, maxwidth=maxwidth)
     return(invisible(x))
   }
 
   cat("\033[1;38;5;239m\033[3m",title,"\033[23m\033[22;39m\n")
-  cat("\033[1;38;5;244m\033[3m","Data licensed by QUANTkiosk\u2122. See terms for usage restriction.","\033[23m\033[22;39m\n")
+  cat("\033[1;38;5;244m\033[3m","Data licensed by QUANTkiosk\u2122 without warranty. See terms for usage restrictions.","\033[23m\033[22;39m\n")
 
   if(rerow)
     rownames(x) <- NULL

@@ -87,7 +87,7 @@ to_sic(qkid, ...)
 qk_sector(sector, ...)
 to_sector(qkid, ...)
 
-# custom constructor
+# convert string version of QKID to class `qkid`
 qkid(qkid, src="qkid", srcid=qkid, retrieved=yyyymmdd())
 
 is.qkid(x)
@@ -154,13 +154,14 @@ number of search matches to return
 }
 \details{
 \R functions to allow for mapping and manipulation of
-QUANTkiosk™'s symbology as well as common identifiers.
+QUANTkiosk™'s symbology as well as common identifiers using a special \code{qkid}
+class.
 }
 \value{
 QUANTkiosk™'s public identifier, known as \sQuote{QKID™} is the central
 identifier used by the QK™ API. It is freely licensed under CC-BY-SA and
-is designed to provide institutional quality symbology usable both within
-professional asset amanagement as well as for non-professional use.
+is designed to provide institutional quality symbology usable within
+professional asset management while being simple to use.
 
 For a full discussion, please refer to official website below and
 the associated documentation. The \sQuote{QKID™} is a portmantaeu identifier,
@@ -203,10 +204,8 @@ this may change in the future.
 
 \examples{
 
-# Johnson & Johnson - primary equity
-jnj.qkid <- qkid("0000200406.0000.001S5SHQ9")
-classname(jnj.qkid)
-
+# QKID™ string to class qkid
+qkid("0000200406.0000.001S5SHQ9")
 
 \dontrun{
 qk_search_co("tesla")

@@ -92,11 +92,11 @@ export(
   as.yyyymmdd,
   seq.yyyymmdd,
   qtrs,
-  days
+  days,
 
-  #to_yyyy,
-  #to_qq,
-  #to_yyyyqq
+  to_yyyy,
+  to_qq,
+  to_yyyyqq
 )
   
 S3method(detail,qkid)
@@ -140,9 +140,10 @@ S3method(print, qkid_detail)
 
 S3method(print, qkaccount)
 
-S3method(qk_sort, qk_df_institutional)
-S3method(qk_filter, qk_df_institutional)
-S3method(qk_summary, qk_df_institutional)
+S3method(qk_sort, qk_df)
+S3method(qk_filter, qk_df)
+S3method(qk_summary, qk_df)
+S3method(print, qk_df_fn)
 S3method(print, qk_df_institutional)
 S3method(print, qk_df_holders)
 S3method(print, qk_df_insider)
@@ -157,6 +158,6 @@ S3method(Ops, yyyymmdd)
 S3method(print, yyyymmdd)
 S3method(seq, yyyymmdd)
 S3method(diff, yyyymmdd)
-#S3method(to_qq, yyyymmdd)
-#S3method(to_yyyy, yyyymmdd)
-#S3method(to_yyyyqq, yyyymmdd)
+S3method(to_qq, yyyymmdd)
+S3method(to_yyyy, yyyymmdd)
+S3method(to_yyyyqq, yyyymmdd)

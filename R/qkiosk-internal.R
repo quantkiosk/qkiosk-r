@@ -1,5 +1,13 @@
 qk_clearcache <- function() {
   .clearQKAPIDATA()
+  .clearQKID()
+}
+.clearQKID <- function() {
+  rm(list=ls(.QKID_CIK), envir=.QKID_CIK)
+  rm(list=ls(.QKID_TICKER), envir=.QKID_TICKER)
+  rm(list=ls(.QKID_PERMID), envir=.QKID_PERMID)
+  rm(list=ls(.QKID_FIGI), envir=.QKID_FIGI)
+  rm(list=ls(.QKID_NAME), envir=.QKID_NAME)
 }
 
 .QKID_CIK <- new.env(hash=TRUE)

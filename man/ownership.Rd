@@ -49,13 +49,15 @@ qk_activist(qkid,
 qk_holders(qkid,
            yyyyqq,
            qtrs=1,
+           agg = TRUE,
+           rollprev = TRUE,
            wait = 1,
            quiet = TRUE)
 
 }
 \arguments{
   \item{qkid}{
-the \sQuote{QKID™} of reporting institution or filer.
+a \code{qkid} object representing the \sQuote{QKID™} of reporting institution or filer. Use \code{qk_cik}, \code{qk_ticker}, or similar. See \code{qkid} for details.
 }
   \item{yyyyqq}{
 a number of the form \sQuote{YYYYQQ} where \sQuote{YYYY} is a 4-digit year, and \sQuote{QQ} is
@@ -75,6 +77,13 @@ for \code{qk_beneficial} and \code{qk_activist} requests, one of
 if \code{TRUE}, all other managers reporting are rolled up into one record, otherwise
 filing will contain other managers if filed for as distinct holdings for one or more of the same
 instruments.
+}
+  \item{rollprev}{
+if \code{TRUE} and requested quarter is latest quarter to file, the previous completed quarter
+will be used to augment the in-progress filings. Any new filers will override the last known
+holdings positions, and yet-to-file updates will allow for last known positions to be seen.
+Setting to \code{FALSE} will disable this merge and will only return the (potentially incomplete) quarter
+being requested.
 }
   \item{wait}{
 time in seconds between calls.

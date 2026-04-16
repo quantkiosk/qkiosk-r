@@ -10,6 +10,9 @@
 \alias{as.yyyymmdd.Date}
 \alias{as.yyyymmdd.numeric}
 \alias{today}
+\alias{to_qq}
+\alias{to_yyyy}
+\alias{to_yyyyqq}
 \alias{seq.yyyymmdd}
 \alias{diff.yyyymmdd}
 \title{
@@ -23,6 +26,10 @@ easy API access.
 yyyymmdd(x = Sys.time(), tz = Sys.getenv("TZ"))
 
 today()
+
+to_qq(yyyymmdd)
+to_yyyy(yyyymmdd)
+to_yyyyqq(yyyymmdd)
 
 qtrs(n)
 days(n)
@@ -46,6 +53,9 @@ as.yyyymmdd(x, ...)
 \arguments{
   \item{x}{
 \R object
+}
+  \item{yyyymmdd}{
+an 8-digit date
 }
   \item{tz}{
 time zone to use internally.

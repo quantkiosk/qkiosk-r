@@ -10,7 +10,12 @@ AAPL.FIGI <- "BBG000B9XRY4"
     `0570` = "REIT", `057C` = "REIT (Call)", `057P` = "REIT (Put)",
     `0600` = "Partnership", `060C` = "Partnership (Call)", `060P` = "Partnership (Put)",
     `0210` = "Note", `0220` = "Debt", `0230` = "Debt (MTN)", `0ZZZ` = "Undefined")
-.QKIDREGEXP_V4 <- "([0-9]{10})[.]([A-Z0-9]{4})[.]([BCDFGHJKLMNPQRSTVWXYZ0-9]{9})|([0-9]{10})[.]([A-Z0-9]{4})[.](UF[CDFGHJKLMNPQRSTVWXYZ0-9]{6}[A])"
+.QKIDREGEXP_V4 <- "([0-9]{10})[.]([A-Z0-9]{4})[.]([BCDFGHJKLMNPQRSTVWXYZ0-9]{9})|([0-9]{10})[.]([A-Z0-9]{4})[.]([UEP][A-Z0-9]{8})"
+
+check_qkid <- function(x) {
+  if(!is_qkid(x))
+    stop("qkid argument is class '",class(x),"': required to be class qkid. See ?qkid for conversion examples.")
+}
 
 .qkidVersion <- function(qkid) {
   if(is.qkid(qkid))
@@ -77,14 +82,17 @@ classname <- function (qkid) {
 
 # quick extract of components
 entity <- function(qkid) {
+  qkid <- to_qkid(qkid)
   e <- substr(qkid$qkid, 0, 10)
   e
 }
 cls <- function(qkid) {
+  qkid <- to_qkid(qkid)
   cls <- substr(qkid$qkid, 12, 15)
   cls
 }
 instrument <- function(qkid) {
+  qkid <- to_qkid(qkid)
   i <- substr(qkid$qkid, 17, 25)
   i
 }
@@ -112,6 +120,8 @@ qk_ticker <- function(ticker, ...) {
     ticker <- to_ticker(ticker)
   .tickerMapping()
   id <- unclass(unname(unlist(mget(ticker, envir=.QKID_TICKER, ifnotfound=NA))))
+  isna <- is.na(ticker)
+  id[isna] <- NA
   qkid(id, "ticker", ticker)
 }
 to_ticker <- function(qkid, ...) {
@@ -120,11 +130,17 @@ to_ticker <- function(qkid, ...) {
 }
 
 qk_cik <- function(cik, ...) {
+  .cikMapping()
   if(is_qkid(cik))
     cik <- to_cik(cik)
-  cik <- as.character(cik)
-  .cikMapping()
+  if(is.numeric(cik) || all(is.character(cik) & nchar(cik) <= 10)) 
+    cik <- as.character(gsub("^0+","",cik))
   id <- unclass(unname(unlist(mget(cik, envir=.QKID_CIK, ifnotfound=NA))))
+  isna <- is.na(id) | id == "N/A"
+  if(any(isna)) {
+    id[isna] <- NA
+    id[is.na(id)] <- sprintf("%010s.0000.000000000",cik)
+  }
   qkid(id, "cik", cik)
 }
 to_cik <- function(qkid, ...) {
@@ -137,6 +153,8 @@ qk_figi <- function(figi, type=c("figi","shareClass","composite"), ...) {
   if(is_qkid(figi))
     figi <- to_figi(figi)
   id <- unclass(unname(unlist(mget(figi, envir=.QKID_FIGI, ifnotfound=NA))))
+  isna <- is.na(figi)
+  id[isna] <- NA
   qkid(id, "figi", figi)
 }
 to_figi <- function(qkid, type=c("figi","shareClass","composite"),  ...) {
@@ -150,6 +168,8 @@ qk_permid <- function(permid, type=c("org", "instrument", "quote"), ... ) {
   permid <- as.character(permid)
   .permidMapping()
   id <- unclass(unname(unlist(mget(permid, envir=.QKID_PERMID, ifnotfound=NA))))
+  isna <- is.na(permid)
+  id[isna] <- NA
   qkid(id, "permid", permid)
 }
 to_permid <- function(qkid, type=c("org", "instrument", "quote"), ...) {
@@ -176,6 +196,8 @@ qk_name <- function(name, ...) {
   name <- as.character(name)
   .nameMapping()
   id <- unclass(unname(unlist(mget(name, envir=.QKID_NAME, ifnotfound=NA))))
+  isna <- is.na(name)
+  id[isna] <- NA
   qkid(id, "name", name)
 }
 to_name <- function(qkid, ...) {

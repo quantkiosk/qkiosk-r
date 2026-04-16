@@ -99,7 +99,7 @@ to_yyyyqq <- function(yyyymmdd) {
 
 to_qq.yyyymmdd <- function(yyyymmdd) ((as.integer(yyyymmdd) %% 10000 %/% 100)-1) %/% 3 + 1
 to_yyyy.yyyymmdd <- function(yyyymmdd) as.integer(yyyymmdd) %/% 10000
-to_yyyyqq.yyyymmdd <- function(yyyymmdd) list(yyyy=to_yyyy(yyyymmdd), qq=to_qq(yyyymmdd))
+to_yyyyqq.yyyymmdd <- function(yyyymmdd) as.integer(sprintf("%d0%d",to_yyyy(yyyymmdd), to_qq(yyyymmdd)))
 
 from_to_yyyy_qq <- function(from,to) {
   s <- to_yyyyqq(seq.yyyymmdd(yyyymmdd(from),yyyymmdd(to)))

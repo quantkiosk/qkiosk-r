@@ -1,4 +1,11 @@
-.fmtcol <- function(x, big.mark=NA) { x <- gsub("\t","  ",x); if(is.na(big.mark)) as.character(x) else format(x, big.mark=big.mark) } 
+.fmtcol <- function(x, big.mark=getOption("qkiosk.big.mark",NA)) {
+  if(is.character(x))
+    x <- gsub("\t","  ",x)
+  if(is.numeric(x) && is.na(big.mark))
+    format(x,justify="right")
+  else
+    format(x)
+} 
 .p <- function(...) paste(..., sep="")
 
 color_names <- c(yellow=228, green=155, blue=159, red=202)
@@ -41,11 +48,12 @@ highlight.data.frame <- function(x, i, color='yellow', bg, fg, ...) {
 }
 
 .pipesep <- if(l10n_info()[["UTF-8"]]) { "\u2502" } else { "|" }
-.style <- function(x, colsep=.pipesep, highlight, theme=getOption("qkiosk.theme",.theme), maxwidth=getOption("width"), topn=getOption("qkiosk.df.topn",5), nrows=getOption("qkiosk.df.nrows",100)) {
+.style <- function(x, colsep=.pipesep, highlight, dig=4, theme=getOption("qkiosk.theme",.theme), maxwidth=getOption("width"), topn=getOption("qkiosk.df.topn",5), nrows=getOption("qkiosk.df.nrows",100),digits=NULL) {
   hl <- rep(-1, len=nrow(x))
   if( !missing(highlight) && !is.null(highlight) ) {
     hl <- highlight
   }
+  if(length(dig) != ncol(x)) dig <- rep(dig[1],ncol(x))
 
   middle <- NA
   prows <- rows <- 1:nrow(x)
@@ -64,6 +72,8 @@ highlight.data.frame <- function(x, i, color='yellow', bg, fg, ...) {
   maxwidth <- maxwidth - 20
   header[[1]] <- paste0(rep(" ", rowchars), collapse="") # TODO: make QK
   for(j in 1:ncol(x)) {
+     if(is.double(x[[j]]) && any(na.omit(x[[j]] %% 1 > 0))) # only apply to decimal precision
+       x[[j]] <- signif(x[[j]],dig[j])
      max_w[j] <- max(ncharna(x[[j]][rows]), nchar(.fmtcol(cnames[j]))) + padding
      hdr_style <- sprintf("%%-%ds", max(3,ncharna(.fmtcol(x[[j]][rows])), nchar(cnames[j])))
      header[[j+1]] <- sprintf(hdr_style, cnames[j])

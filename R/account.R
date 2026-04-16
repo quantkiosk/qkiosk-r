@@ -14,6 +14,10 @@ qk_account <- function(browser=FALSE, files=FALSE) {
     stop("permission denied - verify your API key is set", call.=FALSE)
 
   account <- fromJSON(rawToChar(resp$content), simplifyVector=FALSE)
+  if(isTRUE(files)) {
+    names(account$DataFiles) <- sapply(account$DataFiles,function(.) .$File)
+    names(account$UnivFiles) <- sapply(account$UnivFiles,function(.) .$File)
+  }
   class(account) <- "qkaccount"
   account
 }
@@ -43,27 +47,40 @@ print.qkaccount <- function(x, ...) {
   cat("\nVisit https://quantkiosk.com/account to change your plan or explore offerings.\n\n")
 }
 
-qk_download <- function(type = c("data", "univ"), n = 10) {
+qk_download <- function(file=NULL, type = c("data", "univ", "trials"), n = 10, available=FALSE, retjson=TRUE) {
   x <- qk_account(files=TRUE)
 
   type <- c(data="DataFiles",univ="UnivFiles")[match.arg(type)]
-  choice <- menu(sapply(x[[type]], function(.) sprintf("%s\t[%s]", 
-      .$File, .$LastMod))[1:n], title = sprintf("\nselect files to download (showing %d of %d)",n,x[[paste0(type,"N")]]))
-  if (choice == 0) 
-      return()
-  url <- x[[type]][[choice]]$Url
+  if(isTRUE(available)) {
+    modified <- unname(sapply(x[[type]],function(.) .$LastMod))
+    files <- unname(sapply(x[[type]],function(.) .$File))
+    return(data.frame(modified,files))
+  }
+  if(!is.null(file)) {
+    if(!file %in% names(c(x$DataFiles,x$UnivFiles)))
+      stop(file,"is not available: use 'qk_download(available=TRUE) to view all files")
+    url <- c(x$DataFiles,x$UnivFiles)[[file]]$Url
+  } else {
+    choice <- menu(sapply(x[[type]], function(.) sprintf("%s\t[%s]",
+        .$File, .$LastMod))[1:n], title = sprintf("\nselect files to download (showing %d of %d)",n,x[[paste0(type,"N")]]))
+    if (choice == 0)
+        return()
+    url <- x[[type]][[choice]]$Url
+  }
   resp <- curl_fetch_memory(url)
   if(resp$status_code != "200")
     stop("download access not available", call.=FALSE)
   type <- gsub(".*[.](.*)$", "\\1", grep("Content-Disposition", parse_headers(resp$headers), value=TRUE))
   if(type == "csv") {
-    dat <- read.csv(textConnection(rawToChar(resp$content)))
+    dat <- as.qk_df(read.csv(textConnection(rawToChar(resp$content))))
   } else
   if(type == "psv") {
-    dat <- read.delim(textConnection(rawToChar(resp$content)),sep="|")
+    dat <- as.qk_df(read.delim(textConnection(rawToChar(resp$content)),sep="|"))
   } else
   if(type == "json") {
-    dat <- fromJSON(textConnection(rawToChar(resp$content)))
+    dat <- textConnection(rawToChar(resp$content))
+    if(!isTRUE(retjson))
+      dat <- as.qk_df(fromJSON(dat))
   }
   dat
 }

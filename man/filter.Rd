@@ -2,9 +2,9 @@
 \alias{qk_filter}
 \alias{qk_sort}
 \alias{qk_summary}
-\alias{qk_filter.qk_df_institutional}
-\alias{qk_sort.qk_df_institutional}
-\alias{qk_summary.qk_df_institutional}
+\alias{qk_filter.qk_df}
+\alias{qk_sort.qk_df}
+\alias{qk_summary.qk_df}
 \title{
 QK Object Manipulation
 }
@@ -15,13 +15,15 @@ functions designed to facilitate exploration of specific data structures provide
 \usage{
 qk_filter(x, ...)
 
-\method{qk_filter}{qk_df_institutional}(x, by = c("top", "incr", "decr", "new", "del"), ...)
+\method{qk_filter}{qk_df}(x, by = c("top", "incr", "decr", "new", "del"), ...)
 
 qk_sort(x, ...)
-\method{qk_sort}{qk_df_institutional}(x, by = c("value", "shrsOrPrnAmtType", "portWgt", "QtrsHeld", "QOQSshPrnAmt", "QOQValue", "QOQPortWgt"), incr = TRUE, ...)
+\method{qk_sort}{qk_df}(x, by = c("value", "shrsOrPrnAmtType", "portWgt",
+                                  "QtrsHeld", "qtrsHeld", "QOQSshPrnAmt",
+                                  "QOQValue", "QOQPortWgt"), incr = TRUE, ...)
 
 qk_summary(x, ...)
-\method{qk_summary}{qk_df_institutional}(x, n = c(10, 5), ...)
+\method{qk_summary}{qk_df}(x, n = c(10, 5), ...)
 }
 \arguments{
   \item{x}{
